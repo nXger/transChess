@@ -859,6 +859,7 @@ function showRulesDemo(){
    ========================================================= */
 newGame();
 showRulesDemo();
+document.getElementById('newGame').addEventListener('click', newGame);
 // --- Регистрация Service Worker для PWA ---
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
