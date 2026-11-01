@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Шахматы: Захват-Трансформация</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<meta name="theme-color" content="#629924">
 <style>
 :root{
   --site-hue: 37deg;
@@ -50,6 +53,17 @@ body{
   box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 2px 3px rgba(0,0,0,.4), 0 22px 44px rgba(0,0,0,.55);
   user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
+button#newGame, #install {
+  padding:9px 14px; border-radius: 4px; border:none; cursor:pointer;
+  background: var(--c-secondary); color:#fff;
+  font-weight:700; font-size:13.5px; letter-spacing:.4px; text-transform: uppercase;
+  transition: filter .15s, transform .06s; font-family: inherit;
+}
+button#newGame:hover, #install:hover { filter: brightness(1.12); }
+button#newGame:active, #install:active { transform: translateY(1px); }
+
+#install { background: var(--c-primary); }
+#install[hidden] { display: none; }
 .sq{ position: relative; display:flex; align-items:center; justify-content:center; cursor: pointer; }
 .sq.light{ background: var(--sq-light); }
 .sq.dark { background: var(--sq-dark);  }
@@ -277,6 +291,7 @@ button#newGame:active{ transform: translateY(1px); }
       Красным подсвечены фигуры, которые можно срубить.
     </div>
     <button id="newGame">Новая игра</button>
+    <button id="install" hidden>Установить приложение</button>
     <div class="moves-wrap">
       <div class="moves-title">История ходов</div>
       <div id="moveList" class="moves"></div>
@@ -844,6 +859,41 @@ function showRulesDemo(){
    ========================================================= */
 newGame();
 showRulesDemo();
+// --- Регистрация Service Worker для PWA ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+
+// --- Кнопка установки ---
+let deferredPrompt;
+const installButton = document.getElementById('install');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Предотвращаем автоматическое мини-уведомление Chrome
+  e.preventDefault();
+  deferredPrompt = e;
+  // Показываем нашу кнопку
+  installButton.hidden = false;
+});
+
+installButton.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log(`User response to install prompt: ${outcome}`);
+  // Прячем кнопку после использования
+  installButton.hidden = true;
+  deferredPrompt = null;
+});
+
+window.addEventListener('appinstalled', () => {
+  installButton.hidden = true;
+  console.log('transChess installed');
+});
 </script>
 </body>
 </html>
