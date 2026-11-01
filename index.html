@@ -42,7 +42,15 @@ body{
   font-family: "Roboto","Noto Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   padding: 18px;
 }
+
 .game{ display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; justify-content:center; }
+
+/* ====== ЭТАП 3: обёртка board-column для материала под доской ====== */
+.board-column{
+  display:flex; flex-direction:column; gap:10px;
+  transition: margin 0.35s ease;
+}
+body.focus-mode .game{ gap: 0; }
 
 #board{
   width: var(--size); height: var(--size);
@@ -53,17 +61,52 @@ body{
   box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 2px 3px rgba(0,0,0,.4), 0 22px 44px rgba(0,0,0,.55);
   user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
-button#newGame, #install {
+
+/* ====== ЭТАП 1: материальное преимущество ====== */
+.material-bar{
+  width: var(--size);
+  min-height: 40px;
+  padding: 8px 14px;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13.5px; font-weight: 600;
+  color: var(--c-font);
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  transition: color 0.2s ease;
+}
+.material-bar-top{
+  transform: rotate(180deg);
+}
+.material-bar .chip{
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid #8a8a8a; flex: none;
+}
+.material-bar .chip.w{ background:#f4f4f4; border-color:#f4f4f4; }
+.material-bar .chip.b{ background:#202020; border-color:#9a9a9a; }
+.material-bar.ahead{ color: var(--c-secondary); }
+
+button#newGame, #install, #focusBtn {
   padding:9px 14px; border-radius: 4px; border:none; cursor:pointer;
   background: var(--c-secondary); color:#fff;
   font-weight:700; font-size:13.5px; letter-spacing:.4px; text-transform: uppercase;
-  transition: filter .15s, transform .06s; font-family: inherit;
+  transition: filter .15s, transform .06s, background .15s;
+  font-family: inherit;
 }
 button#newGame:hover, #install:hover { filter: brightness(1.12); }
 button#newGame:active, #install:active { transform: translateY(1px); }
 
 #install { background: var(--c-primary); }
 #install[hidden] { display: none; }
+
+#focusBtn {
+  background: transparent;
+  border: 1px solid var(--c-border);
+  color: var(--c-font);
+}
+#focusBtn:hover { background: var(--c-bg-mid); filter: none; }
+
 .sq{ position: relative; display:flex; align-items:center; justify-content:center; cursor: pointer; }
 .sq.light{ background: var(--sq-light); }
 .sq.dark { background: var(--sq-dark);  }
@@ -105,15 +148,69 @@ button#newGame:active, #install:active { transform: translateY(1px); }
 .coord.file{ bottom: 2px; right: 4px; }
 
 .piece{ inset:0; z-index:2; pointer-events:none; will-change: transform; }
-.piece svg{ width:100%; height:100%; display:block; }
+.piece svg{
+  width:100%; height:100%; display:block;
+  transform-origin: 50% 50%;
+}
 
 .sq.movable:hover{ box-shadow: inset 0 0 0 3px rgba(255,255,255,.35); }
 
 .panel{
-  width: 262px; display:flex; flex-direction:column; gap:12px;
+  width: 262px;
+  display:flex; flex-direction:column; gap:12px;
   background: var(--c-bg); border:1px solid var(--c-border); border-radius: 6px;
   padding:14px; box-shadow: 0 8px 26px rgba(0,0,0,.45);
+  overflow: hidden;
+  transition: width 0.35s ease, opacity 0.25s ease, padding 0.35s ease, border-width 0.35s ease;
 }
+
+/* ====== ЭТАП 3: focus mode ====== */
+body.focus-mode .panel{
+  width: 0;
+  opacity: 0;
+  padding: 0;
+  border-width: 0;
+  pointer-events: none;
+}
+
+.exit-focus{
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 22px;
+  color: var(--c-font);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5);
+  z-index: 90;
+  font-family: inherit;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.exit-focus.hidden{
+  opacity: 0;
+  transform: translate(-50%, -20px);
+  pointer-events: none;
+}
+.exit-focus:hover{ background: var(--c-bg-mid); }
+.exit-focus .chip{
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid #8a8a8a; flex: none;
+}
+.exit-focus .chip.w{ background:#f4f4f4; border-color:#f4f4f4; }
+.exit-focus .chip.b{ background:#202020; border-color:#9a9a9a; }
+.exit-focus .exit-x{
+  padding-left: 8px;
+  margin-left: 4px;
+  border-left: 1px solid var(--c-border);
+  color: var(--c-font-dim);
+}
+
 .panel h1{ margin:0 0 2px; font-size:17px; font-weight:700; letter-spacing:.4px; color:#ddd; }
 .panel h1 span{ color: var(--c-secondary); }
 .status{
@@ -133,14 +230,6 @@ button#newGame:active, #install:active { transform: translateY(1px); }
   border-top:1px solid #2e2e2e; padding-top:10px;
 }
 .legend b{ color: var(--c-bad); }
-button#newGame{
-  padding:9px 14px; border-radius: 4px; border:none; cursor:pointer;
-  background: var(--c-secondary); color:#fff;
-  font-weight:700; font-size:13.5px; letter-spacing:.4px; text-transform: uppercase;
-  transition: filter .15s, transform .06s; font-family: inherit;
-}
-button#newGame:hover{ filter: brightness(1.12); }
-button#newGame:active{ transform: translateY(1px); }
 
 .moves-wrap{ display:flex; flex-direction:column; gap:6px; min-height:0; }
 .moves-title{ font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#7f879c; font-weight:700; }
@@ -281,7 +370,16 @@ button#newGame:active{ transform: translateY(1px); }
 <body>
 
 <div class="game">
+  <!-- ЭТАП 1: обёртка для материала -->
+  <div class="board-column">
+  <div class="board-column">
+  <div class="material-bar material-bar-top" id="materialBarTop"></div>
   <div id="board"></div>
+  <div class="material-bar" id="materialBar"></div>
+</div>
+    <div id="board"></div>
+    <div class="material-bar" id="materialBar"></div>
+  </div>
   <aside class="panel">
     <h1><span>♞</span> Шахматы‑трансформер</h1>
     <div id="status" class="status"></div>
@@ -292,12 +390,21 @@ button#newGame:active{ transform: translateY(1px); }
     </div>
     <button id="newGame">Новая игра</button>
     <button id="install" hidden>Установить приложение</button>
+    <!-- ЭТАП 3: кнопка фокуса -->
+    <button id="focusBtn">Фокус</button>
     <div class="moves-wrap">
       <div class="moves-title">История ходов</div>
       <div id="moveList" class="moves"></div>
     </div>
   </aside>
 </div>
+
+<!-- ЭТАП 3: плавающая кнопка выхода из фокуса -->
+<button id="exitFocus" class="exit-focus hidden">
+  <span class="chip w" id="exitFocusChip"></span>
+  <span id="exitFocusText">Ход белых</span>
+  <span class="exit-x">✕</span>
+</button>
 
 <div id="promo" class="overlay hidden">
   <div class="promo-box">
@@ -365,6 +472,7 @@ const promoChoicesEl = document.getElementById('promoChoices');
 
 let pieceIdCounter = 0;
 let skipAnimation = true;
+let lastRenderTurn = null;
 
 function initialBoard(){
   pieceIdCounter = 0;
@@ -622,6 +730,72 @@ function updateStatus(g){
 }
 
 /* =========================================================
+   ЭТАП 1: материальное преимущество
+   ========================================================= */
+const PIECE_VALUE = { p:1, n:3, b:3, r:5, q:9, k:0 };
+const materialBar    = document.getElementById('materialBar');
+const materialBarTop = document.getElementById('materialBarTop');
+
+function updateMaterialBar(){
+  let w = 0, b = 0;
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++){
+    const p = game.board[r][c];
+    if (!p) continue;
+    const v = PIECE_VALUE[p.type] || 0;
+    if (p.color === 'w') w += v; else b += v;
+  }
+  const diff = w - b;
+
+  let html;
+  if (diff === 0){
+    html = `<span class="chip w"></span><span class="chip b"></span><span>Материал равен</span>`;
+  } else if (diff > 0){
+    html = `<span class="chip w"></span><span>Белые +${diff}</span>`;
+  } else {
+    html = `<span class="chip b"></span><span>Чёрные +${-diff}</span>`;
+  }
+
+  materialBar.classList.toggle('ahead', diff !== 0);
+  materialBarTop.classList.toggle('ahead', diff !== 0);
+  materialBar.innerHTML    = html;
+  materialBarTop.innerHTML = html;
+}
+
+/* =========================================================
+   ЭТАП 3: режим фокуса
+   ========================================================= */
+const focusBtn      = document.getElementById('focusBtn');
+const exitFocusBtn  = document.getElementById('exitFocus');
+const exitFocusChip = document.getElementById('exitFocusChip');
+const exitFocusText = document.getElementById('exitFocusText');
+
+function enterFocusMode(){
+  document.body.classList.add('focus-mode');
+  exitFocusBtn.classList.remove('hidden');
+  updateExitFocus();
+}
+function leaveFocusMode(){
+  document.body.classList.remove('focus-mode');
+  exitFocusBtn.classList.add('hidden');
+}
+function updateExitFocus(){
+  if (game.over){
+    exitFocusChip.style.visibility = 'hidden';
+    exitFocusChip.className = 'chip';
+    exitFocusText.textContent = game.result;
+    return;
+  }
+  exitFocusChip.style.visibility = '';
+  exitFocusChip.className = 'chip ' + game.turn;
+  let txt = game.turn === 'w' ? 'Ход белых' : 'Ход чёрных';
+  if (game.inCheck) txt += ' — шах!';
+  exitFocusText.textContent = txt;
+}
+
+focusBtn.addEventListener('click', enterFocusMode);
+exitFocusBtn.addEventListener('click', leaveFocusMode);
+
+/* =========================================================
    ОТРИСОВКА + FLIP
    ========================================================= */
 function render(){
@@ -721,9 +895,30 @@ function render(){
       });
     });
   }
+    // ==== Поворот всех фигур в зависимости от того, чей ход ====
+  const targetRot = game.turn === 'b' ? 180 : 0;
+  const turnChanged = !skipAnimation && lastRenderTurn !== null && lastRenderTurn !== game.turn;
+  const startRot = game.turn === 'b' ? 0 : 180;
+  boardEl.querySelectorAll('.piece svg').forEach(svg => {
+    if (turnChanged){
+      svg.style.transition = 'none';
+      svg.style.transform = `rotate(${startRot}deg)`;
+      void svg.getBoundingClientRect();          // форсируем reflow
+      requestAnimationFrame(() => {
+        svg.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+        svg.style.transform = `rotate(${targetRot}deg)`;
+      });
+    } else {
+      svg.style.transition = 'none';
+      svg.style.transform = `rotate(${targetRot}deg)`;
+    }
+  });
+  lastRenderTurn = game.turn;
   skipAnimation = false;
 
   renderStatus();
+  updateMaterialBar();   // ЭТАП 1
+  updateExitFocus();     // ЭТАП 3
 }
 
 function renderStatus(){
@@ -764,6 +959,15 @@ boardEl.addEventListener('click', e => {
 
 function onSquareClick(r, c){
   if (game.over || pendingPromotion) return;
+
+  // Повторный клик по уже выбранной фигуре — снимаем выбор
+  if (game.selected && game.selected.r === r && game.selected.c === c){
+    game.selected = null;
+    game.legal = [];
+    render();
+    return;
+  }
+
   if (game.selected){
     const candidates = game.legal.filter(m => m.to.r === r && m.to.c === c);
     if (candidates.length){
