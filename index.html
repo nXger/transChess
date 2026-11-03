@@ -44,8 +44,6 @@ body{
 }
 
 .game{ display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; justify-content:center; }
-
-/* ====== ЭТАП 3: обёртка board-column для материала под доской ====== */
 .board-column{
   display:flex; flex-direction:column; gap:10px;
   transition: margin 0.35s ease;
@@ -62,7 +60,6 @@ body.focus-mode .game{ gap: 0; }
   user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
 
-/* ====== ЭТАП 1: материальное преимущество ====== */
 .material-bar{
   width: var(--size);
   min-height: 40px;
@@ -76,9 +73,6 @@ body.focus-mode .game{ gap: 0; }
   box-shadow: 0 2px 8px rgba(0,0,0,.35);
   transition: color 0.2s ease;
 }
-.material-bar-top{
-  transform: rotate(180deg);
-}
 .material-bar .chip{
   width: 12px; height: 12px; border-radius: 50%;
   border: 2px solid #8a8a8a; flex: none;
@@ -86,6 +80,7 @@ body.focus-mode .game{ gap: 0; }
 .material-bar .chip.w{ background:#f4f4f4; border-color:#f4f4f4; }
 .material-bar .chip.b{ background:#202020; border-color:#9a9a9a; }
 .material-bar.ahead{ color: var(--c-secondary); }
+.material-bar-top{ transform: rotate(180deg); }
 
 button#newGame, #install, #focusBtn {
   padding:9px 14px; border-radius: 4px; border:none; cursor:pointer;
@@ -96,15 +91,9 @@ button#newGame, #install, #focusBtn {
 }
 button#newGame:hover, #install:hover { filter: brightness(1.12); }
 button#newGame:active, #install:active { transform: translateY(1px); }
-
 #install { background: var(--c-primary); }
 #install[hidden] { display: none; }
-
-#focusBtn {
-  background: transparent;
-  border: 1px solid var(--c-border);
-  color: var(--c-font);
-}
+#focusBtn { background: transparent; border: 1px solid var(--c-border); color: var(--c-font); }
 #focusBtn:hover { background: var(--c-bg-mid); filter: none; }
 
 .sq{ position: relative; display:flex; align-items:center; justify-content:center; cursor: pointer; }
@@ -163,39 +152,24 @@ button#newGame:active, #install:active { transform: translateY(1px); }
   overflow: hidden;
   transition: width 0.35s ease, opacity 0.25s ease, padding 0.35s ease, border-width 0.35s ease;
 }
-
-/* ====== ЭТАП 3: focus mode ====== */
 body.focus-mode .panel{
-  width: 0;
-  opacity: 0;
-  padding: 0;
-  border-width: 0;
-  pointer-events: none;
+  width: 0; opacity: 0; padding: 0; border-width: 0; pointer-events: none;
 }
 
 .exit-focus{
-  position: fixed;
-  top: 16px;
-  left: 50%;
+  position: fixed; top: 16px; left: 50%;
   transform: translate(-50%, 0);
   display: flex; align-items: center; gap: 10px;
   padding: 9px 16px;
-  background: var(--c-bg);
-  border: 1px solid var(--c-border);
-  border-radius: 22px;
-  color: var(--c-font);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 13px;
+  background: var(--c-bg); border: 1px solid var(--c-border);
+  border-radius: 22px; color: var(--c-font);
+  cursor: pointer; font-weight: 600; font-size: 13px;
   box-shadow: 0 4px 16px rgba(0,0,0,.5);
-  z-index: 90;
-  font-family: inherit;
+  z-index: 90; font-family: inherit;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .exit-focus.hidden{
-  opacity: 0;
-  transform: translate(-50%, -20px);
-  pointer-events: none;
+  opacity: 0; transform: translate(-50%, -20px); pointer-events: none;
 }
 .exit-focus:hover{ background: var(--c-bg-mid); }
 .exit-focus .chip{
@@ -205,10 +179,8 @@ body.focus-mode .panel{
 .exit-focus .chip.w{ background:#f4f4f4; border-color:#f4f4f4; }
 .exit-focus .chip.b{ background:#202020; border-color:#9a9a9a; }
 .exit-focus .exit-x{
-  padding-left: 8px;
-  margin-left: 4px;
-  border-left: 1px solid var(--c-border);
-  color: var(--c-font-dim);
+  padding-left: 8px; margin-left: 4px;
+  border-left: 1px solid var(--c-border); color: var(--c-font-dim);
 }
 
 .panel h1{ margin:0 0 2px; font-size:17px; font-weight:700; letter-spacing:.4px; color:#ddd; }
@@ -269,23 +241,19 @@ body.focus-mode .panel{
 .promo-choices .piece{ position:static; width:100%; height:100%; inset:auto; }
 
 /* =========================================================
-   ПРИВЕТСТВЕННОЕ ДЕМО (объяснение правил)
+   ДЕМО ПРАВИЛ
    ========================================================= */
 .demo-overlay{
-  position: fixed; inset: 0; z-index: 100;
+  position: fixed; inset: 0; z-index: 110;
   display: flex; align-items: center; justify-content: center;
   background: rgba(8, 9, 12, 0.82);
   backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
   opacity: 1; transition: opacity 0.45s ease;
 }
 .demo-overlay.hidden{ opacity: 0; pointer-events: none; }
-
 .demo-card{
-  background: var(--c-bg);
-  border: 1px solid var(--c-border);
-  border-radius: 12px;
-  padding: 20px 22px 14px;
-  text-align: center;
+  background: var(--c-bg); border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 20px 22px 14px; text-align: center;
   box-shadow: 0 24px 60px rgba(0,0,0,.65);
   max-width: calc(100vw - 24px);
   animation: demo-card-in 0.4s cubic-bezier(.3, 1.4, .5, 1);
@@ -294,58 +262,29 @@ body.focus-mode .panel{
   0%   { transform: scale(0.92); opacity: 0; }
   100% { transform: scale(1);    opacity: 1; }
 }
-
-.demo-title{
-  font-size: 16px; font-weight: 700; color: #ddd;
-  margin-bottom: 4px; letter-spacing: 0.3px;
-}
-.demo-subtitle{
-  font-size: 13px; color: var(--c-font-dim);
-  margin-bottom: 16px; min-height: 18px;
-  transition: color 0.3s ease;
-}
-
+.demo-title{ font-size: 16px; font-weight: 700; color: #ddd; margin-bottom: 4px; letter-spacing: 0.3px; }
+.demo-subtitle{ font-size: 13px; color: var(--c-font-dim); margin-bottom: 16px; min-height: 18px; transition: color 0.3s ease; }
 .demo-stage{
-  position: relative;
-  width: 260px; height: 130px;
-  margin: 0 auto 12px;
-  border-radius: 4px;
-  overflow: hidden;
+  position: relative; width: 260px; height: 130px; margin: 0 auto 12px;
+  border-radius: 4px; overflow: hidden;
   box-shadow: 0 0 0 1px rgba(0,0,0,.5), 0 4px 14px rgba(0,0,0,.4);
 }
-.demo-sq{
-  position: absolute; top: 0;
-  width: 130px; height: 130px;
-}
+.demo-sq{ position: absolute; top: 0; width: 130px; height: 130px; }
 .demo-sq.left  { left: 0;     background: var(--sq-light); }
 .demo-sq.right { left: 130px; background: var(--sq-dark);  }
-
-.demo-piece, .demo-mover{
-  position: absolute; top: 0;
-  width: 130px; height: 130px;
-}
+.demo-piece, .demo-mover{ position: absolute; top: 0; width: 130px; height: 130px; }
 .demo-piece { left: 130px; z-index: 1; transition: opacity 0.3s ease; }
-.demo-mover {
-  left: 0; z-index: 3;
-  transition: transform 0.9s cubic-bezier(.4, 0, .2, 1);
-}
+.demo-mover { left: 0; z-index: 3; transition: transform 0.9s cubic-bezier(.4, 0, .2, 1); }
 .demo-mover.go { transform: translateX(130px); }
-.demo-mover.pop {
-  animation: demo-pop 0.5s cubic-bezier(.3, 1.4, .5, 1) forwards;
-}
+.demo-mover.pop { animation: demo-pop 0.5s cubic-bezier(.3, 1.4, .5, 1) forwards; }
 @keyframes demo-pop{
   0%   { transform: translateX(130px) scale(1);    }
   40%  { transform: translateX(130px) scale(1.12); }
   100% { transform: translateX(130px) scale(1);    }
 }
-
-.demo-piece svg, .demo-mover svg{
-  width: 100%; height: 100%; display: block;
-}
-
+.demo-piece svg, .demo-mover svg{ width: 100%; height: 100%; display: block; }
 .demo-burst{
-  position: absolute;
-  left: 130px; top: 0;
+  position: absolute; left: 130px; top: 0;
   width: 130px; height: 130px;
   z-index: 2; pointer-events: none; opacity: 0;
   background: radial-gradient(circle,
@@ -359,27 +298,193 @@ body.focus-mode .panel{
   0%   { opacity: 1; transform: scale(0.55); }
   100% { opacity: 0; transform: scale(1.25); }
 }
+.demo-hint{ font-size: 11px; color: var(--c-font-dim); opacity: 0.7; letter-spacing: 0.5px; margin-top: 4px; }
 
-.demo-hint{
-  font-size: 11px; color: var(--c-font-dim);
-  opacity: 0.7; letter-spacing: 0.5px;
-  margin-top: 4px;
+/* =========================================================
+   ЭКРАН ВЫБОРА РЕЖИМА
+   ========================================================= */
+#modeSelect{
+  z-index: 105;
+}
+.mode-box{
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 26px 28px 24px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,.65);
+  max-width: calc(100vw - 32px);
+  animation: demo-card-in 0.4s cubic-bezier(.3, 1.4, .5, 1);
+}
+.mode-title{ font-size: 19px; font-weight: 700; color: #ddd; margin-bottom: 4px; letter-spacing: 0.3px; }
+.mode-subtitle{ font-size: 13px; color: var(--c-font-dim); margin-bottom: 20px; }
+.mode-buttons{ display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.mode-btn{
+  background: var(--c-bg-mid);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  cursor: pointer;
+  color: var(--c-font);
+  font-family: inherit;
+  font-size: 13px;
+  min-width: 160px;
+  transition: all 0.15s;
+  text-align: center;
+}
+.mode-btn:hover{
+  background: var(--c-bg-zebra);
+  border-color: var(--c-secondary);
+  transform: translateY(-2px);
+}
+.mode-btn.primary{
+  background: var(--c-secondary);
+  color: #fff;
+  border-color: var(--c-secondary);
+  font-weight: 700;
+}
+.mode-btn.primary:hover{
+  filter: brightness(1.1);
+}
+.mode-icon{ font-size: 26px; margin-bottom: 6px; }
+.mode-name{ font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.mode-desc{ font-size: 11px; color: var(--c-font-dim); }
+.mode-btn.primary .mode-desc{ color: rgba(255,255,255,0.85); }
+
+.bot-settings{
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--c-border);
+  text-align: left;
+}
+.bot-settings[hidden]{ display: none; }
+.bot-settings label{
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--c-font);
+}
+.bot-settings label span{
+  color: var(--c-secondary);
+  font-weight: 700;
+}
+/* ▼▼▼ styles for color buttons ▼▼▼ */
+.bot-color-choice{ display: flex; gap: 6px; margin-bottom: 14px; }
+.color-btn{
+  flex: 1; padding: 9px 4px;
+  background: var(--c-bg-mid); border: 1px solid var(--c-border);
+  border-radius: 4px; color: var(--c-font); cursor: pointer;
+  font-family: inherit; font-size: 12px;
+  transition: all .15s;
+}
+.color-btn:hover{ background: var(--c-bg-zebra); }
+.color-btn.active{
+  background: var(--c-secondary); border-color: var(--c-secondary);
+  color: #fff; font-weight: 700;
+}
+/* ▲▲▲ */
+.bot-settings input[type=range]{
+  width: 100%;
+  margin-bottom: 8px;
+  accent-color: var(--c-secondary);
+}
+.bot-level-hint{
+  font-size: 12px;
+  color: var(--c-font-dim);
+  margin-bottom: 14px;
+  text-align: center;
+}
+#startBotGame{
+  width: 100%;
+  padding: 11px 14px;
+}
+
+/* =========================================================
+   ФОН ЭКРАНА ВЫБОРА РЕЖИМА И ПРОСМОТР ИСТОРИИ
+   ========================================================= */
+/* Фон экрана выбора режима — шахматная доска */
+#modeSelect{
+  background:
+    linear-gradient(rgba(8,9,12,.85), rgba(8,9,12,.85)),
+    conic-gradient(#b58863 90deg, #f0d9b5 90deg 180deg,
+                   #b58863 180deg 270deg, #f0d9b5 270deg)
+    center / calc(var(--size) / 4) calc(var(--size) / 4);
+}
+/* Скрыть игру, пока открыт выбор режима */
+body.mode-select-active .game{ visibility: hidden; }
+
+/* Плашка «Просмотр истории» */
+.history-bar{
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--c-bg-mid); border-left: 3px solid var(--c-primary);
+  border-radius: 4px; padding: 6px 10px;
+  font-size: 12px; color: var(--c-font);
+}
+.history-bar.hidden{ display: none; }
+.history-bar button{
+  background: var(--c-primary); color: #fff; border: none;
+  border-radius: 3px; padding: 4px 8px; cursor: pointer;
+  font-family: inherit; font-size: 11px; font-weight: 600;
+}
+.history-bar button:hover{ filter: brightness(1.1); }
+
+/* Кликабельные ходы */
+.move-row .mv{ cursor: pointer; border-radius: 2px; }
+.move-row .mv:empty{ cursor: default; pointer-events: none; }
+.move-row .mv:not(:empty):hover{ background: rgba(255,255,255,.08); }
+.move-row .mv.current{ background: var(--c-secondary); color: #fff; }
+
+/* Плашка «Игра окончена» */
+.game-over-bar{
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px;
+  background: var(--c-bg); border: 1px solid var(--c-border);
+  border-radius: 10px; padding: 10px 16px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.6);
+  z-index: 75;
+  animation: demo-card-in .35s cubic-bezier(.3, 1.4, .5, 1);
+}
+.game-over-bar.hidden{ display: none; }
+.game-over-bar span{ font-weight: 700; color: var(--c-font); margin-right: 6px; }
+.game-over-bar button{
+  padding: 7px 12px; border-radius: 4px; border: none; cursor: pointer;
+  font-family: inherit; font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .3px;
+  transition: filter .15s;
+}
+#playAgainBtn{ background: var(--c-secondary); color: #fff; }
+#playAgainBtn:hover{ filter: brightness(1.12); }
+#toMenuBtn2{
+  background: var(--c-bg-mid); color: var(--c-font);
+  border: 1px solid var(--c-border);
+}
+#toMenuBtn2:hover{ background: var(--c-bg-zebra); }
+.rating-badge{
+  font-size: 13px; color: var(--c-font-dim); font-weight: 600;
+  padding: 4px 2px;
+}
+.rating-badge b{ color: var(--c-secondary); font-weight: 700; }
+.rating-badge-select{
+  font-size: 14px; margin-bottom: 18px; padding: 0;
+}
+.rating-gain{
+  color: var(--c-secondary); font-weight: 700; font-size: 13px;
+  margin-right: 4px;
 }
 </style>
 </head>
-<body>
+<body class="mode-select-active">
 
 <div class="game">
-  <!-- ЭТАП 1: обёртка для материала -->
   <div class="board-column">
-  <div class="board-column">
-  <div class="material-bar material-bar-top" id="materialBarTop"></div>
-</div>
+    <div class="material-bar material-bar-top" id="materialBarTop"></div>
     <div id="board"></div>
     <div class="material-bar" id="materialBar"></div>
   </div>
   <aside class="panel">
     <h1><span>♞</span> Шахматы‑трансформер</h1>
+    <div class="rating-badge">⭐ Рейтинг: <b id="ratingValue">1000</b></div>
     <div id="status" class="status"></div>
     <div class="legend">
       При взятии фигура <b>превращается</b> в тип срубленной.<br>
@@ -387,17 +492,20 @@ body.focus-mode .panel{
       Красным подсвечены фигуры, которые можно срубить.
     </div>
     <button id="newGame">Новая игра</button>
+    <button id="toMenuBtn" class="mode-btn" style="padding:9px 14px;min-width:0;font-size:13px;text-transform:uppercase;font-weight:700;">В меню</button>
     <button id="install" hidden>Установить приложение</button>
-    <!-- ЭТАП 3: кнопка фокуса -->
     <button id="focusBtn">Фокус</button>
     <div class="moves-wrap">
       <div class="moves-title">История ходов</div>
+      <div id="historyBar" class="history-bar hidden">
+        <span id="historyPos">начальная позиция</span>
+        <button id="backToLive">К игре</button>
+      </div>
       <div id="moveList" class="moves"></div>
     </div>
   </aside>
 </div>
 
-<!-- ЭТАП 3: плавающая кнопка выхода из фокуса -->
 <button id="exitFocus" class="exit-focus hidden">
   <span class="chip w" id="exitFocusChip"></span>
   <span id="exitFocusText">Ход белых</span>
@@ -411,7 +519,6 @@ body.focus-mode .panel{
   </div>
 </div>
 
-<!-- Приветственное демо правил -->
 <div id="demo" class="demo-overlay hidden">
   <div class="demo-card">
     <div class="demo-title">Новый вид шахмат</div>
@@ -425,6 +532,49 @@ body.focus-mode .panel{
     </div>
     <div class="demo-hint">нажмите, чтобы пропустить</div>
   </div>
+</div>
+
+<!-- Экран выбора режима -->
+<div id="modeSelect" class="overlay">
+  <div class="mode-box">
+    <div class="mode-title">♞ Шахматы-трансформер</div>
+    <div class="mode-subtitle">Выберите режим игры</div>
+    <div class="rating-badge rating-badge-select">Ваш рейтинг: <b id="ratingValue2">1000</b></div>
+    <div class="mode-buttons" id="modeButtons">
+      <button id="modeFriend" class="mode-btn">
+        <div class="mode-icon">👥</div>
+        <div class="mode-name">Игра с другом</div>
+        <div class="mode-desc">Два игрока на одном устройстве</div>
+      </button>
+      <button id="modeBot" class="mode-btn">
+        <div class="mode-icon">🤖</div>
+        <div class="mode-name">Против бота</div>
+        <div class="mode-desc">Игра против бота</div>
+      </button>
+    </div>
+    <div class="bot-settings" id="botSettings" hidden>
+      <!-- ▼▼▼ color choice ▼▼▼ -->
+      <label>Ваш цвет:</label>
+      <div class="bot-color-choice" id="botColorChoice">
+        <button type="button" data-color="w" class="color-btn active">Белые</button>
+        <button type="button" data-color="b" class="color-btn">Чёрные</button>
+        <button type="button" data-color="random" class="color-btn">🎲 Случайно</button>
+      </div>
+      <!-- ▲▲▲ -->
+      <label>Сила бота: <span id="botLevelLabel">5</span></label>
+      <input type="range" id="botLevel" min="1" max="10" value="5" step="1">
+      <div class="bot-level-hint" id="botLevelHint">Средний</div>
+      <button id="startBotGame" class="mode-btn primary">Начать игру</button>
+    </div>
+  </div>
+</div>
+
+<!-- Плашка завершения игры -->
+<div id="gameOverBar" class="game-over-bar hidden">
+  <span id="gameOverText">Мат!</span>
+  <span id="ratingGain" class="rating-gain"></span>
+  <button id="playAgainBtn">Сыграть ещё</button>
+  <button id="toMenuBtn2">На главную</button>
 </div>
 
 <script>
@@ -456,6 +606,7 @@ function svgPiece(type, color){
 const GLYPH  = { k:'♚', q:'♛', r:'♜', b:'♝', n:'♞', p:'♟' };
 const OTHER  = { w:'b', b:'w' };
 const FILES  = 'abcdefgh';
+const PIECE_VALUE = { p:1, n:3, b:3, r:5, q:9, k:0 };
 
 const KNIGHT_DELTAS = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
 const KING_DELTAS   = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
@@ -467,6 +618,10 @@ const statusEl       = document.getElementById('status');
 const moveListEl     = document.getElementById('moveList');
 const promoEl        = document.getElementById('promo');
 const promoChoicesEl = document.getElementById('promoChoices');
+const historyBar     = document.getElementById('historyBar');
+const historyPos     = document.getElementById('historyPos');
+const gameOverBar    = document.getElementById('gameOverBar');
+const gameOverText   = document.getElementById('gameOverText');
 
 let pieceIdCounter = 0;
 let skipAnimation = true;
@@ -485,22 +640,69 @@ function initialBoard(){
   return b;
 }
 
+function cloneBoard(board){
+  return board.map(row => row.map(p => p ? { type: p.type, color: p.color, id: p.id } : null));
+}
+
 let game;
 let pendingPromotion = false;
 
+/* ==== Состояние бота / режима ==== */
+let mode = 'friend';
+let botLevel = 5;
+let botColor = 'b';
+let humanColor = 'w';
+let selectedColor = 'w';
+let botThinking = false;
+let viewingPly = null;
+let gameGeneration = 0;
+
+const START_RATING = 1000;
+const RATING_KEY = 'transChess.rating';
+
+function getRating(){
+  const v = parseInt(localStorage.getItem(RATING_KEY) || '', 10);
+  return isNaN(v) ? START_RATING : v;
+}
+function setRating(v){
+  localStorage.setItem(RATING_KEY, String(v));
+}
+
+// Примерный «рейтинг» бота по уровню: L1=800, L5=1440, L10=2240
+function botRating(level){
+  return 800 + (level - 1) * 160;
+}
+
+function calculateRatingGain(playerRating, level){
+  const expected = 1 / (1 + Math.pow(10, (botRating(level) - playerRating) / 400));
+  const basePoints = 5 + level * 3;          // L1=8, L10=35
+  const raw = basePoints * (1 - expected);
+  return Math.max(1, Math.round(raw));       // минимум 1 за победу
+}
+
 function newGame(){
-  skipAnimation = true;
+  gameGeneration++;
+  botThinking = false;
+  viewingPly = null;
+  const initBoard = initialBoard();
   game = {
-    board: initialBoard(), turn: 'w',
+    board: initBoard, turn: 'w',
     castling: { wK:true, wQ:true, bK:true, bQ:true },
     ep: null, selected: null, legal: [], lastMove: null,
-    history: [], inCheck: false, over: false, result: ''
+    history: [], inCheck: false, over: false, result: '',
+    movesLog: [],
+    historyStates: [cloneBoard(initBoard)],
+    ratingAwarded: false,
+    lastRatingGain: 0
   };
   pendingPromotion = false;
   promoEl.classList.add('hidden');
   updateStatus(game);
   render();
   renderMoves();
+  if (mode === 'bot' && game.turn === botColor){
+    maybeBotMove();
+  }
 }
 
 function isAttacked(board, r, c, by){
@@ -674,11 +876,10 @@ function notate(mv, captured, piece){
   return s;
 }
 
-function playMove(g, mv){
+function applyMoveMeta(g, mv){
   const piece = g.board[mv.from.r][mv.from.c];
   const color = piece.color;
   const captured = mv.enPassant ? g.board[mv.from.r][mv.to.c] : g.board[mv.to.r][mv.to.c];
-  g.history.push(notate(mv, captured, piece));
 
   if (piece.type === 'k'){ g.castling[color + 'K'] = false; g.castling[color + 'Q'] = false; }
   const capturedSq = mv.enPassant ? { r: mv.from.r, c: mv.to.c } : mv.to;
@@ -711,9 +912,22 @@ function playMove(g, mv){
     piece.type = captured.type;
   }
 
-  g.lastMove = mv; g.selected = null; g.legal = [];
   g.turn = OTHER[color];
+}
+
+function playMove(g, mv){
+  const piece = g.board[mv.from.r][mv.from.c];
+  const captured = mv.enPassant ? g.board[mv.from.r][mv.to.c] : g.board[mv.to.r][mv.to.c];
+  g.history.push(notate(mv, captured, piece));
+
+  applyMoveMeta(g, mv);
+
+  g.movesLog.push(mv);
+  g.historyStates.push(cloneBoard(g.board));
+
+  g.lastMove = mv; g.selected = null; g.legal = [];
   updateStatus(g); render(); renderMoves();
+  maybeBotMove();
 }
 
 function updateStatus(g){
@@ -725,19 +939,32 @@ function updateStatus(g){
       ? `Мат! Победа ${g.turn === 'w' ? 'чёрных' : 'белых'}`
       : 'Пат — ничья';
   } else { g.over = false; g.result = ''; }
+  if (g.over && !g.ratingAwarded && mode === 'bot'){
+  g.ratingAwarded = true;
+  let gain = 0;
+  if (g.result.includes('Мат')){
+    const winner = g.result.includes('белых') ? 'w' : 'b';
+    if (winner === humanColor){
+      gain = calculateRatingGain(getRating(), botLevel);
+      setRating(getRating() + gain);
+    }
+  }
+  game.lastRatingGain = gain;
+  updateRatingDisplay();
+}
 }
 
 /* =========================================================
-   ЭТАП 1: материальное преимущество
+   МАТЕРИАЛЬНОЕ ПРЕИМУЩЕСТВО
    ========================================================= */
-const PIECE_VALUE = { p:1, n:3, b:3, r:5, q:9, k:0 };
 const materialBar    = document.getElementById('materialBar');
 const materialBarTop = document.getElementById('materialBarTop');
 
 function updateMaterialBar(){
+  const board = viewingPly !== null ? game.historyStates[viewingPly] : game.board;
   let w = 0, b = 0;
   for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++){
-    const p = game.board[r][c];
+    const p = board[r][c];
     if (!p) continue;
     const v = PIECE_VALUE[p.type] || 0;
     if (p.color === 'w') w += v; else b += v;
@@ -760,7 +987,7 @@ function updateMaterialBar(){
 }
 
 /* =========================================================
-   ЭТАП 3: режим фокуса
+   ФОКУС
    ========================================================= */
 const focusBtn      = document.getElementById('focusBtn');
 const exitFocusBtn  = document.getElementById('exitFocus');
@@ -783,6 +1010,12 @@ function updateExitFocus(){
     exitFocusText.textContent = game.result;
     return;
   }
+  if (botThinking){
+    exitFocusChip.style.visibility = '';
+    exitFocusChip.className = 'chip ' + game.turn;
+    exitFocusText.textContent = 'Бот думает…';
+    return;
+  }
   exitFocusChip.style.visibility = '';
   exitFocusChip.className = 'chip ' + game.turn;
   let txt = game.turn === 'w' ? 'Ход белых' : 'Ход чёрных';
@@ -794,9 +1027,11 @@ focusBtn.addEventListener('click', enterFocusMode);
 exitFocusBtn.addEventListener('click', leaveFocusMode);
 
 /* =========================================================
-   ОТРИСОВКА + FLIP
+   ОТРИСОВКА + FLIP + ПОВОРОТ
    ========================================================= */
 function render(){
+  const S = viewingPly !== null ? buildViewState() : game;
+
   const oldRects = new Map();
   if (!skipAnimation){
     boardEl.querySelectorAll('.piece[data-id]').forEach(el => {
@@ -808,15 +1043,15 @@ function render(){
 
   const targets = new Map();
   const captureTargets = new Set();
-  for (const mv of game.legal){
+  for (const mv of S.legal){
     targets.set(mv.to.r * 8 + mv.to.c, mv);
-    const dest = game.board[mv.to.r][mv.to.c];
-    if ((dest && dest.color !== game.turn) || mv.enPassant)
+    const dest = S.board[mv.to.r][mv.to.c];
+    if ((dest && dest.color !== S.turn) || mv.enPassant)
       captureTargets.add(mv.to.r * 8 + mv.to.c);
   }
 
-  const checkSq = game.inCheck ? findKing(game.board, game.turn) : null;
-  const lm = game.lastMove;
+  const checkSq = S.inCheck ? findKing(S.board, S.turn) : null;
+  const lm = S.lastMove;
 
   for (let r = 0; r < 8; r++){
     for (let c = 0; c < 8; c++){
@@ -824,7 +1059,7 @@ function render(){
       el.className = 'sq ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
       el.dataset.r = r; el.dataset.c = c;
 
-      const isSel  = game.selected && game.selected.r === r && game.selected.c === c;
+      const isSel  = S.selected && S.selected.r === r && S.selected.c === c;
       const isLast = lm && ((lm.from.r === r && lm.from.c === c) || (lm.to.r === r && lm.to.c === c));
 
       if (isSel || isLast){
@@ -853,14 +1088,14 @@ function render(){
         el.appendChild(sp);
       }
 
-      const p = game.board[r][c];
+      const p = S.board[r][c];
       if (p){
         const pieceEl = document.createElement('div');
         pieceEl.className = 'piece';
         pieceEl.dataset.id = p.id;
         pieceEl.innerHTML = svgPiece(p.type, p.color);
         el.appendChild(pieceEl);
-        if (p.color === game.turn && !game.over) el.classList.add('movable');
+        if (p.color === S.turn && !S.over && !botThinking) el.classList.add('movable');
       }
 
       const mv = targets.get(r * 8 + c);
@@ -893,15 +1128,22 @@ function render(){
       });
     });
   }
-    // ==== Поворот всех фигур в зависимости от того, чей ход ====
-  const targetRot = game.turn === 'b' ? 180 : 0;
-  const turnChanged = !skipAnimation && lastRenderTurn !== null && lastRenderTurn !== game.turn;
-  const startRot = game.turn === 'b' ? 0 : 180;
+
+  // ▼▼▼ Поворот фигур: в режиме бота — фиксированный (без анимации),
+  //     в режиме с другом — как раньше, по чей ход ▼▼▼
+  const targetRot = mode === 'bot' ? 0 : (S.turn === 'b' ? 180 : 0);
+  const turnChanged = mode !== 'bot'
+    && viewingPly === null
+    && !skipAnimation
+    && lastRenderTurn !== null
+    && lastRenderTurn !== S.turn;
+  const startRot = S.turn === 'b' ? 0 : 180;
+  // ▲▲▲
   boardEl.querySelectorAll('.piece svg').forEach(svg => {
     if (turnChanged){
       svg.style.transition = 'none';
       svg.style.transform = `rotate(${startRot}deg)`;
-      void svg.getBoundingClientRect();          // форсируем reflow
+      void svg.getBoundingClientRect();
       requestAnimationFrame(() => {
         svg.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
         svg.style.transform = `rotate(${targetRot}deg)`;
@@ -911,25 +1153,57 @@ function render(){
       svg.style.transform = `rotate(${targetRot}deg)`;
     }
   });
-  lastRenderTurn = game.turn;
+  lastRenderTurn = S.turn;
+
   skipAnimation = false;
 
   renderStatus();
-  updateMaterialBar();   // ЭТАП 1
-  updateExitFocus();     // ЭТАП 3
+  updateMaterialBar();
+  updateExitFocus();
+}
+
+function buildViewState(){
+  return {
+    board: game.historyStates[viewingPly],
+    turn: viewingPly % 2 === 0 ? 'w' : 'b',
+    selected: null,
+    legal: [],
+    lastMove: viewingPly > 0 ? game.movesLog[viewingPly - 1] : null,
+    inCheck: false,
+    over: true
+  };
 }
 
 function renderStatus(){
+  if (game.over) showGameOverBar(); else hideGameOverBar();
+
   statusEl.className = 'status';
+
+  if (viewingPly !== null){
+    statusEl.innerHTML = `<span>Просмотр: ${viewingPly === 0 ? 'начальная позиция' : Math.ceil(viewingPly/2) + '. ' + (viewingPly % 2 === 1 ? 'белые' : 'чёрные')}</span>`;
+    return;
+  }
+
   if (game.over){
     statusEl.classList.add('over');
     statusEl.innerHTML = `<span>${game.result}</span>`;
+    return;
+  }
+  if (botThinking){
+    statusEl.innerHTML = `<span class="chip ${game.turn}"></span><span>Бот думает…</span>`;
     return;
   }
   const chip = `<span class="chip ${game.turn}"></span>`;
   let txt = game.turn === 'w' ? 'Ход белых' : 'Ход чёрных';
   if (game.inCheck) txt += ' — шах!';
   statusEl.innerHTML = chip + `<span>${txt}</span>`;
+}
+function updateRatingDisplay(){
+  const r = getRating();
+  const el1 = document.getElementById('ratingValue');
+  const el2 = document.getElementById('ratingValue2');
+  if (el1) el1.textContent = r;
+  if (el2) el2.textContent = r;
 }
 
 function renderMoves(){
@@ -938,12 +1212,27 @@ function renderMoves(){
   for (let i = 0; i < h.length; i += 2){
     html += `<div class="move-row">
                <span class="num">${i / 2 + 1}.</span>
-               <span class="mv">${h[i] || ''}</span>
-               <span class="mv">${h[i + 1] || ''}</span>
+               <span class="mv" data-ply="${i + 1}">${h[i] || ''}</span>
+               <span class="mv" data-ply="${i + 2}">${h[i + 1] || ''}</span>
              </div>`;
   }
   moveListEl.innerHTML = html;
-  moveListEl.scrollTop = moveListEl.scrollHeight;
+
+  if (viewingPly !== null){
+    const cur = moveListEl.querySelector(`.mv[data-ply="${viewingPly}"]`);
+    if (cur){ cur.classList.add('current'); cur.scrollIntoView({ block: 'nearest' }); }
+  } else {
+    moveListEl.scrollTop = moveListEl.scrollHeight;
+  }
+
+  if (viewingPly === null){
+    historyBar.classList.add('hidden');
+  } else {
+    historyBar.classList.remove('hidden');
+    historyPos.textContent = viewingPly === 0
+      ? 'начальная позиция'
+      : `${Math.ceil(viewingPly/2)}. ${viewingPly % 2 === 1 ? 'белые' : 'чёрные'}`;
+  }
 }
 
 /* =========================================================
@@ -956,9 +1245,10 @@ boardEl.addEventListener('click', e => {
 });
 
 function onSquareClick(r, c){
-  if (game.over || pendingPromotion) return;
+  if (game.over || pendingPromotion || botThinking) return;
+  if (viewingPly !== null) return;
+  if (mode === 'bot' && game.turn === botColor) return;
 
-  // Повторный клик по уже выбранной фигуре — снимаем выбор
   if (game.selected && game.selected.r === r && game.selected.c === c){
     game.selected = null;
     game.legal = [];
@@ -1003,6 +1293,281 @@ function askPromotion(color, callback){
 }
 
 /* =========================================================
+   ПРОСМОТР ИСТОРИИ
+   ========================================================= */
+function setViewingPly(ply){
+  if (ply === null || ply >= game.history.length){
+    viewingPly = null;
+  } else {
+    viewingPly = ply;
+  }
+  game.selected = null;
+  game.legal = [];
+  render();
+  renderMoves();
+}
+
+function showGameOverBar(){
+  gameOverText.textContent = game.result;
+  const gainEl = document.getElementById('ratingGain');
+  if (mode === 'bot' && game.lastRatingGain > 0){
+    gainEl.textContent = `+${game.lastRatingGain} к рейтингу`;
+  } else {
+    gainEl.textContent = '';
+  }
+  gameOverBar.classList.remove('hidden');
+}
+function hideGameOverBar(){
+  gameOverBar.classList.add('hidden');
+}
+
+function showModeSelect(){
+  leaveFocusMode();
+  document.body.classList.add('mode-select-active');
+  modeSelectEl.classList.remove('hidden');
+  botSettingsEl.hidden = true;
+  document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.color-btn[data-color="w"]').classList.add('active');
+  selectedColor = 'w';
+  gameGeneration++;
+  botThinking = false;
+  viewingPly = null;
+  hideGameOverBar();
+}
+
+/* =========================================================
+   ДВИЖОК БОТА
+   ========================================================= */
+const LEVEL_CONFIG = {
+  1:  { depth: 1, timeLimit: 300,  blunder: 0.30, topN: 5, topProb: 0.5 },
+  2:  { depth: 1, timeLimit: 500,  blunder: 0.15, topN: 4, topProb: 0.4 },
+  3:  { depth: 2, timeLimit: 800,  blunder: 0.05, topN: 3, topProb: 0.3 },
+  4:  { depth: 2, timeLimit: 1200, blunder: 0,    topN: 2, topProb: 0.15 },
+  5:  { depth: 3, timeLimit: 1500, blunder: 0,    topN: 1, topProb: 0 },
+  6:  { depth: 3, timeLimit: 2000, blunder: 0,    topN: 1, topProb: 0 },
+  7:  { depth: 4, timeLimit: 2500, blunder: 0,    topN: 1, topProb: 0 },
+  8:  { depth: 4, timeLimit: 3000, blunder: 0,    topN: 1, topProb: 0 },
+  9:  { depth: 4, timeLimit: 4000, blunder: 0,    topN: 1, topProb: 0 },
+  10: { depth: 5, timeLimit: 5000, blunder: 0,    topN: 1, topProb: 0 },
+};
+
+let searchStartTime = 0;
+let timeLimit = 2000;
+let nodeCount = 0;
+let searchAborted = false;
+
+function checkTime(){
+  nodeCount++;
+  if ((nodeCount & 511) === 0){
+    if (Date.now() - searchStartTime > timeLimit) searchAborted = true;
+  }
+  return searchAborted;
+}
+
+function cloneGame(g){
+  return {
+    board: cloneBoard(g.board),
+    turn: g.turn,
+    castling: { ...g.castling },
+    ep: g.ep ? { ...g.ep } : null,
+    selected: null,
+    legal: [],
+    lastMove: null,
+    history: [],
+    inCheck: false,
+    over: false,
+    result: ''
+  };
+}
+
+function transformationPotential(g, r, c, piece){
+  const ownVal = PIECE_VALUE[piece.type] || 0;
+  const enemy = OTHER[piece.color];
+  let best = 0;
+  const inB = (rr, cc) => rr >= 0 && rr < 8 && cc >= 0 && cc < 8;
+  const consider = (rr, cc) => {
+    if (!inB(rr, cc)) return;
+    const t = g.board[rr][cc];
+    if (t && t.color === enemy){
+      const gain = (PIECE_VALUE[t.type] || 0) - ownVal;
+      if (gain > best) best = gain;
+    }
+  };
+
+  if (piece.type === 'p'){
+    const dir = piece.color === 'w' ? -1 : 1;
+    consider(r + dir, c - 1);
+    consider(r + dir, c + 1);
+  } else if (piece.type === 'n'){
+    for (const [dr, dc] of KNIGHT_DELTAS) consider(r + dr, c + dc);
+  } else if (piece.type === 'k'){
+    for (const [dr, dc] of KING_DELTAS) consider(r + dr, c + dc);
+  } else {
+    const dirs = [];
+    if (piece.type === 'b' || piece.type === 'q') dirs.push(...BISHOP_DIRS);
+    if (piece.type === 'r' || piece.type === 'q') dirs.push(...ROOK_DIRS);
+    for (const [dr, dc] of dirs){
+      let rr = r + dr, cc = c + dc;
+      while (inB(rr, cc)){
+        const t = g.board[rr][cc];
+        if (t){
+          if (t.color === enemy){
+            const gain = (PIECE_VALUE[t.type] || 0) - ownVal;
+            if (gain > best) best = gain;
+          }
+          break;
+        }
+        rr += dr; cc += dc;
+      }
+    }
+  }
+  return best;
+}
+
+function evaluate(g, color){
+  let score = 0;
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++){
+    const p = g.board[r][c];
+    if (!p) continue;
+    let v = PIECE_VALUE[p.type] || 0;
+    if (p.type !== 'k'){
+      v += transformationPotential(g, r, c, p) * 0.5;
+    }
+    score += (p.color === 'w' ? v : -v);
+  }
+  return color === 'w' ? score : -score;
+}
+
+function moveScore(g, mv){
+  const t = g.board[mv.to.r][mv.to.c];
+  if (!t) return 0;
+  return (PIECE_VALUE[t.type] || 0) * 10;
+}
+
+function quiescence(g, alpha, beta, color, maxDepth){
+  if (checkTime()) return 0;
+  if (maxDepth <= 0) return evaluate(g, color);
+
+  const standPat = evaluate(g, color);
+  if (standPat >= beta) return beta;
+  if (standPat > alpha) alpha = standPat;
+
+  const allMoves = allLegalMoves(g, color);
+  const captures = [];
+  for (const mv of allMoves){
+    const target = mv.enPassant ? g.board[mv.from.r][mv.to.c] : g.board[mv.to.r][mv.to.c];
+    if (target) captures.push({ mv, value: PIECE_VALUE[target.type] || 0 });
+  }
+  captures.sort((a, b) => b.value - a.value);
+
+  for (const { mv } of captures){
+    const child = cloneGame(g);
+    applyMoveMeta(child, mv);
+    const score = -quiescence(child, -beta, -alpha, OTHER[color], maxDepth - 1);
+    if (score >= beta) return beta;
+    if (score > alpha) alpha = score;
+  }
+  return alpha;
+}
+
+function negamax(g, depth, alpha, beta, color){
+  if (checkTime()) return 0;
+  if (depth <= 0) return quiescence(g, alpha, beta, color, 4);
+
+  const moves = allLegalMoves(g, color);
+  if (moves.length === 0){
+    const inCheck = isKingInCheck(g, color);
+    return inCheck ? -100000 + (10 - depth) : 0;
+  }
+
+  moves.sort((a, b) => moveScore(g, b) - moveScore(g, a));
+
+  let best = -Infinity;
+  for (const mv of moves){
+    const child = cloneGame(g);
+    applyMoveMeta(child, mv);
+    const score = -negamax(child, depth - 1, -beta, -alpha, OTHER[color]);
+    if (score > best) best = score;
+    if (best > alpha) alpha = best;
+    if (alpha >= beta) break;
+  }
+  return best;
+}
+
+function chooseBotMove(){
+  const config = LEVEL_CONFIG[botLevel] || LEVEL_CONFIG[5];
+  const g = game;
+  const color = g.turn;
+
+  const moves = allLegalMoves(g, color);
+  if (moves.length === 0) return null;
+  if (moves.length === 1) return moves[0];
+
+  if (config.blunder > 0 && Math.random() < config.blunder){
+    return moves[Math.floor(Math.random() * moves.length)];
+  }
+
+  moves.sort((a, b) => moveScore(g, b) - moveScore(g, a));
+
+  searchStartTime = Date.now();
+  timeLimit = config.timeLimit;
+  nodeCount = 0;
+  searchAborted = false;
+
+  let scored = [];
+  let bestMove = moves[0];
+
+  for (let d = 1; d <= config.depth; d++){
+    scored = [];
+    for (const mv of moves){
+      const child = cloneGame(g);
+      applyMoveMeta(child, mv);
+      const score = -negamax(child, d - 1, -Infinity, Infinity, OTHER[color]);
+      scored.push({ mv, score });
+      if (searchAborted) break;
+    }
+
+    if (!searchAborted && scored.length){
+      scored.sort((a, b) => b.score - a.score);
+      bestMove = scored[0].mv;
+      moves.length = 0;
+      for (const s of scored) moves.push(s.mv);
+    }
+
+    if (searchAborted) break;
+    if (Date.now() - searchStartTime > timeLimit) break;
+  }
+
+  if (scored.length === 0) return bestMove;
+
+  if (config.topN > 1 && Math.random() < config.topProb){
+    const topN = Math.min(config.topN, scored.length);
+    return scored[Math.floor(Math.random() * topN)].mv;
+  }
+
+  return scored[0].mv;
+}
+
+function maybeBotMove(){
+  if (mode !== 'bot') return;
+  if (game.over) return;
+  if (game.turn !== botColor) return;
+  if (viewingPly !== null) return;
+
+  const gen = gameGeneration;
+  botThinking = true;
+  render();
+
+  setTimeout(() => {
+    if (gen !== gameGeneration) return;
+    const mv = chooseBotMove();
+    botThinking = false;
+    if (mv) playMove(game, mv);
+    else render();
+  }, 120);
+}
+
+/* =========================================================
    ДЕМО ПРАВИЛ
    ========================================================= */
 function showRulesDemo(){
@@ -1012,7 +1577,6 @@ function showRulesDemo(){
   const burst   = document.getElementById('demoBurst');
   const caption = document.getElementById('demoCaption');
 
-  // Начальная расстановка: ладья (белая) и ферзь (чёрный)
   mover.innerHTML  = svgPiece('r', 'w');
   target.innerHTML = svgPiece('q', 'b');
 
@@ -1031,38 +1595,100 @@ function showRulesDemo(){
 
   overlay.addEventListener('click', dismiss);
 
-  // t = 0.9s — ладья начинает движение
   timers.push(setTimeout(() => mover.classList.add('go'), 900));
-
-  // t = 1.8s — ладья дошла, ферзь исчезает, вспышка
   timers.push(setTimeout(() => {
     target.style.opacity = '0';
     burst.classList.add('show');
   }, 1800));
-
-  // t = 2.2s — превращение (SVG меняется), лёгкий «подскок»
   timers.push(setTimeout(() => {
     mover.innerHTML = svgPiece('q', 'w');
     mover.classList.add('pop');
   }, 2200));
-
-  // t = 2.5s — подпись меняется
   timers.push(setTimeout(() => {
     caption.textContent = 'Ладья срубила ферзя — и стала ферзём!';
     caption.style.color = 'var(--c-secondary)';
   }, 2500));
-
-  // t = 5s — автоскрытие
   timers.push(setTimeout(dismiss, 5000));
 }
 
 /* =========================================================
+   ЭКРАН ВЫБОРА РЕЖИМА
+   ========================================================= */
+const modeSelectEl   = document.getElementById('modeSelect');
+const modeFriendBtn  = document.getElementById('modeFriend');
+const modeBotBtn     = document.getElementById('modeBot');
+const botSettingsEl  = document.getElementById('botSettings');
+const botLevelEl     = document.getElementById('botLevel');
+const botLevelLabelEl= document.getElementById('botLevelLabel');
+const botLevelHintEl = document.getElementById('botLevelHint');
+const startBotGameBtn= document.getElementById('startBotGame');
+
+const LEVEL_HINTS = {
+  1:'Новичок', 2:'Очень слабый', 3:'Слабый', 4:'Ниже среднего',
+  5:'Средний', 6:'Выше среднего', 7:'Сильный', 8:'Очень сильный',
+  9:'Опасный', 10:'Максимум'
+};
+
+modeFriendBtn.addEventListener('click', () => {
+  mode = 'friend';
+  humanColor = 'w';
+  botColor = 'b';
+  startGame();
+});
+
+modeBotBtn.addEventListener('click', () => {
+  botSettingsEl.hidden = false;
+  botLevelEl.focus();
+});
+
+botLevelEl.addEventListener('input', () => {
+  botLevelLabelEl.textContent = botLevelEl.value;
+  botLevelHintEl.textContent = LEVEL_HINTS[botLevelEl.value] || '';
+});
+
+document.querySelectorAll('.color-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedColor = btn.dataset.color;
+  });
+});
+
+startBotGameBtn.addEventListener('click', () => {
+  mode = 'bot';
+  botLevel = parseInt(botLevelEl.value, 10);
+  humanColor = selectedColor === 'random' ? (Math.random() < 0.5 ? 'w' : 'b') : selectedColor;
+  botColor = OTHER[humanColor];
+  startGame();
+});
+
+function startGame(){
+  document.body.classList.remove('mode-select-active');
+  modeSelectEl.classList.add('hidden');
+  newGame();
+}
+
+/* =========================================================
+   ПРОСМОТР ИСТОРИИ + УПРАВЛЕНИЕ
+   ========================================================= */
+moveListEl.addEventListener('click', e => {
+  const el = e.target.closest('.mv[data-ply]');
+  if (!el || !el.textContent.trim()) return;
+  setViewingPly(+el.dataset.ply);
+});
+document.getElementById('backToLive').addEventListener('click', () => setViewingPly(null));
+document.getElementById('toMenuBtn').addEventListener('click', showModeSelect);
+document.getElementById('toMenuBtn2').addEventListener('click', showModeSelect);
+document.getElementById('playAgainBtn').addEventListener('click', () => { hideGameOverBar(); newGame(); });
+
+/* =========================================================
    СТАРТ
    ========================================================= */
-newGame();
-showRulesDemo();
-document.getElementById('newGame').addEventListener('click', newGame);
-// --- Регистрация Service Worker для PWA ---
+document.getElementById('newGame').addEventListener('click', () => {
+  newGame();
+});
+
+// --- Service Worker ---
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js')
@@ -1071,15 +1697,13 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// --- Кнопка установки ---
+// --- Установка ---
 let deferredPrompt;
 const installButton = document.getElementById('install');
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Предотвращаем автоматическое мини-уведомление Chrome
   e.preventDefault();
   deferredPrompt = e;
-  // Показываем нашу кнопку
   installButton.hidden = false;
 });
 
@@ -1088,7 +1712,6 @@ installButton.addEventListener('click', async () => {
   deferredPrompt.prompt();
   const { outcome } = await deferredPrompt.userChoice;
   console.log(`User response to install prompt: ${outcome}`);
-  // Прячем кнопку после использования
   installButton.hidden = true;
   deferredPrompt = null;
 });
@@ -1097,6 +1720,8 @@ window.addEventListener('appinstalled', () => {
   installButton.hidden = true;
   console.log('transChess installed');
 });
+updateRatingDisplay();
+showRulesDemo();
 </script>
 </body>
 </html>
