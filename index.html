@@ -1053,8 +1053,11 @@ function render(){
   const checkSq = S.inCheck ? findKing(S.board, S.turn) : null;
   const lm = S.lastMove;
 
-  for (let r = 0; r < 8; r++){
-    for (let c = 0; c < 8; c++){
+    const flip = mode === 'bot' && humanColor === 'b';
+  for (let i = 0; i < 8; i++){
+    for (let j = 0; j < 8; j++){
+      const r = flip ? 7 - i : i;
+      const c = flip ? 7 - j : j;
       const el = document.createElement('div');
       el.className = 'sq ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
       el.dataset.r = r; el.dataset.c = c;
@@ -1077,12 +1080,12 @@ function render(){
         ch.className = 'cap-hl';
         el.appendChild(ch);
       }
-      if (c === 0){
+            if (j === 0){
         const sp = document.createElement('span');
         sp.className = 'coord rank'; sp.textContent = 8 - r;
         el.appendChild(sp);
       }
-      if (r === 7){
+      if (i === 7){
         const sp = document.createElement('span');
         sp.className = 'coord file'; sp.textContent = FILES[c];
         el.appendChild(sp);
