@@ -1362,6 +1362,7 @@ function render(){
 
   renderStatus();
   updateMaterialBar();
+  materialBarTop.style.display = (mode === 'bot') ? 'none' : '';
   updateExitFocus();
 }
 
