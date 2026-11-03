@@ -369,7 +369,6 @@ body.focus-mode .panel{
   color: var(--c-secondary);
   font-weight: 700;
 }
-/* ▼▼▼ styles for color buttons ▼▼▼ */
 .bot-color-choice{ display: flex; gap: 6px; margin-bottom: 14px; }
 .color-btn{
   flex: 1; padding: 9px 4px;
@@ -383,7 +382,6 @@ body.focus-mode .panel{
   background: var(--c-secondary); border-color: var(--c-secondary);
   color: #fff; font-weight: 700;
 }
-/* ▲▲▲ */
 .bot-settings input[type=range]{
   width: 100%;
   margin-bottom: 8px;
@@ -403,7 +401,6 @@ body.focus-mode .panel{
 /* =========================================================
    ФОН ЭКРАНА ВЫБОРА РЕЖИМА И ПРОСМОТР ИСТОРИИ
    ========================================================= */
-/* Фон экрана выбора режима — шахматная доска */
 #modeSelect{
   background:
     linear-gradient(rgba(8,9,12,.85), rgba(8,9,12,.85)),
@@ -411,10 +408,8 @@ body.focus-mode .panel{
                    #b58863 180deg 270deg, #f0d9b5 270deg)
     center / calc(var(--size) / 4) calc(var(--size) / 4);
 }
-/* Скрыть игру, пока открыт выбор режима */
 body.mode-select-active .game{ visibility: hidden; }
 
-/* Плашка «Просмотр истории» */
 .history-bar{
   display: flex; justify-content: space-between; align-items: center;
   background: var(--c-bg-mid); border-left: 3px solid var(--c-primary);
@@ -429,13 +424,11 @@ body.mode-select-active .game{ visibility: hidden; }
 }
 .history-bar button:hover{ filter: brightness(1.1); }
 
-/* Кликабельные ходы */
 .move-row .mv{ cursor: pointer; border-radius: 2px; }
 .move-row .mv:empty{ cursor: default; pointer-events: none; }
 .move-row .mv:not(:empty):hover{ background: rgba(255,255,255,.08); }
 .move-row .mv.current{ background: var(--c-secondary); color: #fff; }
 
-/* Плашка «Игра окончена» */
 .game-over-bar{
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
   display: flex; align-items: center; gap: 10px;
@@ -472,6 +465,30 @@ body.mode-select-active .game{ visibility: hidden; }
   color: var(--c-secondary); font-weight: 700; font-size: 13px;
   margin-right: 4px;
 }
+
+/* =========================================================
+   НАСТРОЙКИ
+   ========================================================= */
+.mode-box{ position: relative; }
+.settings-btn{
+  position: absolute; top: 12px; right: 12px;
+  width: 36px; height: 36px;
+  background: var(--c-bg-mid); border: 1px solid var(--c-border);
+  color: var(--c-font); border-radius: 50%; cursor: pointer;
+  font-size: 17px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.settings-btn:hover{ background: var(--c-bg-zebra); transform: rotate(30deg); }
+.settings-box{
+  background: var(--c-bg); border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 26px 28px 22px; text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,.65);
+  min-width: 300px;
+}
+.lang-choice{ display: flex; gap: 8px; margin: 14px 0 20px; }
+.lang-btn{ padding: 12px; font-size: 14px; }
+.lang-btn.active{ background: var(--c-secondary); border-color: var(--c-secondary); color: #fff; font-weight: 700; }
 </style>
 </head>
 <body class="mode-select-active">
@@ -483,23 +500,19 @@ body.mode-select-active .game{ visibility: hidden; }
     <div class="material-bar" id="materialBar"></div>
   </div>
   <aside class="panel">
-    <h1><span>♞</span> Шахматы‑трансформер</h1>
-    <div class="rating-badge">⭐ Рейтинг: <b id="ratingValue">1000</b></div>
+    <h1><span>♞</span> <span data-i18n="app.title">Шахматы‑трансформер</span></h1>
+    <div class="rating-badge"><span data-i18n="rating.label">⭐ Рейтинг:</span> <b id="ratingValue">1000</b></div>
     <div id="status" class="status"></div>
-    <div class="legend">
-      При взятии фигура <b>превращается</b> в тип срубленной.<br>
-      Король не трансформируется.<br>
-      Красным подсвечены фигуры, которые можно срубить.
-    </div>
-    <button id="newGame">Новая игра</button>
-    <button id="toMenuBtn" class="mode-btn" style="padding:9px 14px;min-width:0;font-size:13px;text-transform:uppercase;font-weight:700;">В меню</button>
-    <button id="install" hidden>Установить приложение</button>
-    <button id="focusBtn">Фокус</button>
+    <div class="legend" data-i18n-html="legend.text">При взятии фигура <b>превращается</b> в тип срубленной.<br>Король не трансформируется.<br>Красным подсвечены фигуры, которые можно срубить.</div>
+    <button id="newGame" data-i18n="btn.newGame">Новая игра</button>
+    <button id="toMenuBtn" class="mode-btn" style="padding:9px 14px;min-width:0;font-size:13px;text-transform:uppercase;font-weight:700;" data-i18n="btn.toMenu">В меню</button>
+    <button id="install" hidden data-i18n="btn.install">Установить приложение</button>
+    <button id="focusBtn" data-i18n="btn.focus">Фокус</button>
     <div class="moves-wrap">
-      <div class="moves-title">История ходов</div>
+      <div class="moves-title" data-i18n="history.title">История ходов</div>
       <div id="historyBar" class="history-bar hidden">
-        <span id="historyPos">начальная позиция</span>
-        <button id="backToLive">К игре</button>
+        <span id="historyPos" data-i18n="history.initial">начальная позиция</span>
+        <button id="backToLive" data-i18n="btn.backToLive">К игре</button>
       </div>
       <div id="moveList" class="moves"></div>
     </div>
@@ -514,15 +527,15 @@ body.mode-select-active .game{ visibility: hidden; }
 
 <div id="promo" class="overlay hidden">
   <div class="promo-box">
-    <div class="title">Превращение пешки (ход вперёд на последнюю горизонталь)</div>
+    <div class="title" data-i18n="promo.title">Превращение пешки (ход вперёд на последнюю горизонталь)</div>
     <div class="promo-choices" id="promoChoices"></div>
   </div>
 </div>
 
 <div id="demo" class="demo-overlay hidden">
   <div class="demo-card">
-    <div class="demo-title">Новый вид шахмат</div>
-    <div class="demo-subtitle" id="demoCaption">Срубите фигуру — превратитесь в неё</div>
+    <div class="demo-title" data-i18n="demo.title">Новый вид шахмат</div>
+    <div class="demo-subtitle" id="demoCaption" data-i18n="demo.caption">Срубите фигуру — превратитесь в неё</div>
     <div class="demo-stage">
       <div class="demo-sq left"></div>
       <div class="demo-sq right"></div>
@@ -530,42 +543,54 @@ body.mode-select-active .game{ visibility: hidden; }
       <div class="demo-piece" id="demoTarget"></div>
       <div class="demo-mover" id="demoMover"></div>
     </div>
-    <div class="demo-hint">нажмите, чтобы пропустить</div>
+    <div class="demo-hint" data-i18n="demo.hint">нажмите, чтобы пропустить</div>
   </div>
 </div>
 
 <!-- Экран выбора режима -->
 <div id="modeSelect" class="overlay">
   <div class="mode-box">
-    <div class="mode-title">♞ Шахматы-трансформер</div>
-    <div class="mode-subtitle">Выберите режим игры</div>
-    <div class="rating-badge rating-badge-select">Ваш рейтинг: <b id="ratingValue2">1000</b></div>
+    <button id="settingsBtn" class="settings-btn" aria-label="Настройки" title="Настройки">⚙️</button>
+    <div class="mode-title" data-i18n="mode.title">♞ Шахматы-трансформер</div>
+    <div class="mode-subtitle" data-i18n="mode.subtitle">Выберите режим игры</div>
+    <div class="rating-badge rating-badge-select"><span data-i18n="mode.rating">Ваш рейтинг:</span> <b id="ratingValue2">1000</b></div>
     <div class="mode-buttons" id="modeButtons">
       <button id="modeFriend" class="mode-btn">
         <div class="mode-icon">👥</div>
-        <div class="mode-name">Игра с другом</div>
-        <div class="mode-desc">Два игрока на одном устройстве</div>
+        <div class="mode-name" data-i18n="mode.friend.name">Игра с другом</div>
+        <div class="mode-desc" data-i18n="mode.friend.desc">Два игрока на одном устройстве</div>
       </button>
       <button id="modeBot" class="mode-btn">
         <div class="mode-icon">🤖</div>
-        <div class="mode-name">Против бота</div>
-        <div class="mode-desc">Игра против бота</div>
+        <div class="mode-name" data-i18n="mode.bot.name">Против бота</div>
+        <div class="mode-desc" data-i18n="mode.bot.desc">Игра против бота</div>
       </button>
     </div>
     <div class="bot-settings" id="botSettings" hidden>
-      <!-- ▼▼▼ color choice ▼▼▼ -->
-      <label>Ваш цвет:</label>
+      <label data-i18n="bot.color">Ваш цвет:</label>
       <div class="bot-color-choice" id="botColorChoice">
-        <button type="button" data-color="w" class="color-btn active">Белые</button>
-        <button type="button" data-color="b" class="color-btn">Чёрные</button>
-        <button type="button" data-color="random" class="color-btn">🎲 Случайно</button>
+        <button type="button" data-color="w" class="color-btn active" data-i18n="bot.color.w">Белые</button>
+        <button type="button" data-color="b" class="color-btn" data-i18n="bot.color.b">Чёрные</button>
+        <button type="button" data-color="random" class="color-btn" data-i18n="bot.color.random">🎲 Случайно</button>
       </div>
-      <!-- ▲▲▲ -->
-      <label>Сила бота: <span id="botLevelLabel">5</span></label>
-      <input type="range" id="botLevel" min="1" max="10" value="5" step="1">
+      <label><span data-i18n="bot.level">Сила бота:</span> <span id="botLevelLabel">5</span></label>
+      <input type="range" id="botLevel" min="1" max="15" value="5" step="1">
       <div class="bot-level-hint" id="botLevelHint">Средний</div>
-      <button id="startBotGame" class="mode-btn primary">Начать игру</button>
+      <button id="startBotGame" class="mode-btn primary" data-i18n="btn.startBotGame">Начать игру</button>
     </div>
+  </div>
+</div>
+
+<!-- Модалка настроек -->
+<div id="settingsModal" class="overlay hidden" style="z-index:108;">
+  <div class="settings-box">
+    <div class="mode-title" data-i18n="settings.title">Настройки</div>
+    <div class="mode-subtitle" data-i18n="settings.language">Язык приложения</div>
+    <div class="lang-choice">
+      <button data-lang="ru" class="color-btn lang-btn">Русский</button>
+      <button data-lang="en" class="color-btn lang-btn">English</button>
+    </div>
+    <button id="settingsClose" class="mode-btn primary" data-i18n="btn.settingsClose">Закрыть</button>
   </div>
 </div>
 
@@ -573,8 +598,8 @@ body.mode-select-active .game{ visibility: hidden; }
 <div id="gameOverBar" class="game-over-bar hidden">
   <span id="gameOverText">Мат!</span>
   <span id="ratingGain" class="rating-gain"></span>
-  <button id="playAgainBtn">Сыграть ещё</button>
-  <button id="toMenuBtn2">На главную</button>
+  <button id="playAgainBtn" data-i18n="btn.playAgain">Сыграть ещё</button>
+  <button id="toMenuBtn2" data-i18n="btn.toHome">На главную</button>
 </div>
 
 <script>
@@ -644,6 +669,22 @@ function cloneBoard(board){
   return board.map(row => row.map(p => p ? { type: p.type, color: p.color, id: p.id } : null));
 }
 
+function cloneGame(g){
+  return {
+    board: cloneBoard(g.board),
+    turn: g.turn,
+    castling: { ...g.castling },
+    ep: g.ep ? { ...g.ep } : null,
+    selected: null,
+    legal: [],
+    lastMove: null,
+    history: [],
+    inCheck: false,
+    over: false,
+    result: ''
+  };
+}
+
 let game;
 let pendingPromotion = false;
 
@@ -660,6 +701,167 @@ let gameGeneration = 0;
 const START_RATING = 1000;
 const RATING_KEY = 'transChess.rating';
 
+/* =========================================================
+   ЛОКАЛИЗАЦИЯ
+   ========================================================= */
+const I18N = {
+  ru: {
+    'page.title': 'Шахматы: Захват-Трансформация',
+    'app.title': 'Шахматы‑трансформер',
+    'rating.label': '⭐ Рейтинг:',
+    'mode.rating': 'Ваш рейтинг:',
+    'legend.text': 'При взятии фигура <b>превращается</b> в тип срубленной.<br>Король не трансформируется.<br>Красным подсвечены фигуры, которые можно срубить.',
+    'btn.newGame': 'Новая игра',
+    'btn.toMenu': 'В меню',
+    'btn.install': 'Установить приложение',
+    'btn.focus': 'Фокус',
+    'btn.backToLive': 'К игре',
+    'btn.playAgain': 'Сыграть ещё',
+    'btn.toHome': 'На главную',
+    'btn.startBotGame': 'Начать игру',
+    'btn.settingsClose': 'Закрыть',
+    'history.title': 'История ходов',
+    'history.initial': 'начальная позиция',
+    'history.viewing': 'Просмотр:',
+    'history.white': 'белые',
+    'history.black': 'чёрные',
+    'status.white': 'Ход белых',
+    'status.black': 'Ход чёрных',
+    'status.check': '— шах!',
+    'status.thinking': 'Бот думает…',
+    'result.mate.w': 'Мат! Победа белых',
+    'result.mate.b': 'Мат! Победа чёрных',
+    'result.stalemate': 'Пат — ничья',
+    'result.ratingGain': '+{n} к рейтингу',
+    'promo.title': 'Превращение пешки (ход вперёд на последнюю горизонталь)',
+    'demo.title': 'Новый вид шахмат',
+    'demo.caption': 'Срубите фигуру — превратитесь в неё',
+    'demo.caption2': 'Ладья срубила ферзя — и стала ферзём!',
+    'demo.hint': 'нажмите, чтобы пропустить',
+    'mode.title': '♞ Шахматы-трансформер',
+    'mode.subtitle': 'Выберите режим игры',
+    'mode.friend.name': 'Игра с другом',
+    'mode.friend.desc': 'Два игрока на одном устройстве',
+    'mode.bot.name': 'Против бота',
+    'mode.bot.desc': 'Игра против бота',
+    'bot.color': 'Ваш цвет:',
+    'bot.color.w': 'Белые',
+    'bot.color.b': 'Чёрные',
+    'bot.color.random': '🎲 Случайно',
+    'bot.level': 'Сила бота:',
+    'bot.hint.1': 'Новичок',
+    'bot.hint.2': 'Очень слабый',
+    'bot.hint.3': 'Слабый',
+    'bot.hint.4': 'Ниже среднего',
+    'bot.hint.5': 'Средний',
+    'bot.hint.6': 'Выше среднего',
+    'bot.hint.7': 'Сильный',
+    'bot.hint.8': 'Очень сильный',
+    'bot.hint.9': 'Опасный',
+    'bot.hint.10': 'Максимум',
+    'bot.hint.11': 'Эксперт',
+    'bot.hint.12': 'Мастер',
+    'bot.hint.13': 'Гроссмейстер',
+    'bot.hint.14': 'Легенда',
+    'bot.hint.15': 'Абсолют',
+    'settings.title': 'Настройки',
+    'settings.language': 'Язык приложения',
+  },
+  en: {
+    'page.title': 'Chess: Capture-Transform',
+    'app.title': 'Chess Transformer',
+    'rating.label': '⭐ Rating:',
+    'mode.rating': 'Your rating:',
+    'legend.text': 'When capturing, the piece <b>transforms</b> into the type it captured.<br>The king does not transform.<br>Red highlights pieces that can be captured.',
+    'btn.newGame': 'New Game',
+    'btn.toMenu': 'Menu',
+    'btn.install': 'Install App',
+    'btn.focus': 'Focus',
+    'btn.backToLive': 'Back to game',
+    'btn.playAgain': 'Play Again',
+    'btn.toHome': 'Main Menu',
+    'btn.startBotGame': 'Start Game',
+    'btn.settingsClose': 'Close',
+    'history.title': 'Move History',
+    'history.initial': 'starting position',
+    'history.viewing': 'Viewing:',
+    'history.white': 'white',
+    'history.black': 'black',
+    'status.white': 'White to move',
+    'status.black': 'Black to move',
+    'status.check': '— check!',
+    'status.thinking': 'Bot is thinking…',
+    'result.mate.w': 'Checkmate! White wins',
+    'result.mate.b': 'Checkmate! Black wins',
+    'result.stalemate': 'Stalemate — draw',
+    'result.ratingGain': '+{n} rating',
+    'promo.title': 'Pawn promotion (move forward to the last rank)',
+    'demo.title': 'A new kind of chess',
+    'demo.caption': 'Capture a piece — become it',
+    'demo.caption2': 'The rook captured the queen — and became a queen!',
+    'demo.hint': 'tap to skip',
+    'mode.title': '♞ Chess Transformer',
+    'mode.subtitle': 'Choose game mode',
+    'mode.friend.name': 'Play with a friend',
+    'mode.friend.desc': 'Two players on one device',
+    'mode.bot.name': 'Play vs bot',
+    'mode.bot.desc': 'Play against a bot',
+    'bot.color': 'Your color:',
+    'bot.color.w': 'White',
+    'bot.color.b': 'Black',
+    'bot.color.random': '🎲 Random',
+    'bot.level': 'Bot strength:',
+    'bot.hint.1': 'Beginner',
+    'bot.hint.2': 'Very weak',
+    'bot.hint.3': 'Weak',
+    'bot.hint.4': 'Below average',
+    'bot.hint.5': 'Average',
+    'bot.hint.6': 'Above average',
+    'bot.hint.7': 'Strong',
+    'bot.hint.8': 'Very strong',
+    'bot.hint.9': 'Dangerous',
+    'bot.hint.10': 'Maximum',
+    'bot.hint.11': 'Expert',
+    'bot.hint.12': 'Master',
+    'bot.hint.13': 'Grandmaster',
+    'bot.hint.14': 'Legend',
+    'bot.hint.15': 'Absolute',
+    'settings.title': 'Settings',
+    'settings.language': 'Application language',
+  }
+};
+
+let currentLang = localStorage.getItem('transChess.lang') || 'ru';
+
+function t(key){
+  return (I18N[currentLang] && I18N[currentLang][key]) || key;
+}
+
+function applyLanguage(){
+  document.documentElement.lang = currentLang;
+  document.title = t('page.title');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    el.innerHTML = t(el.dataset.i18nHtml);
+  });
+  updateBotLevelHint();
+  if (typeof game !== 'undefined' && game){
+    if (game.over){
+      game.result = game.inCheck
+        ? (game.turn === 'w' ? t('result.mate.b') : t('result.mate.w'))
+        : t('result.stalemate');
+    }
+    render();
+    renderMoves();
+  }
+}
+
+function updateBotLevelHint(){
+  botLevelHintEl.textContent = t('bot.hint.' + botLevelEl.value);
+}
+
 function getRating(){
   const v = parseInt(localStorage.getItem(RATING_KEY) || '', 10);
   return isNaN(v) ? START_RATING : v;
@@ -668,14 +870,14 @@ function setRating(v){
   localStorage.setItem(RATING_KEY, String(v));
 }
 
-// Примерный «рейтинг» бота по уровню: L1=800, L5=1440, L10=2240
+// Примерный «рейтинг» бота по уровню: L1=800, L5=1440, L10=2240, L15=3040
 function botRating(level){
   return 800 + (level - 1) * 160;
 }
 
 function calculateRatingGain(playerRating, level){
   const expected = 1 / (1 + Math.pow(10, (botRating(level) - playerRating) / 400));
-  const basePoints = 5 + level * 3;          // L1=8, L10=35
+  const basePoints = 5 + level * 3;          // L1=8, L15=50
   const raw = basePoints * (1 - expected);
   return Math.max(1, Math.round(raw));       // минимум 1 за победу
 }
@@ -684,6 +886,7 @@ function newGame(){
   gameGeneration++;
   botThinking = false;
   viewingPly = null;
+  createBotWorker();   // ← terminate старый + свежий TT
   const initBoard = initialBoard();
   game = {
     board: initBoard, turn: 'w',
@@ -936,22 +1139,22 @@ function updateStatus(g){
   if (moves.length === 0){
     g.over = true;
     g.result = g.inCheck
-      ? `Мат! Победа ${g.turn === 'w' ? 'чёрных' : 'белых'}`
-      : 'Пат — ничья';
+      ? (g.turn === 'w' ? t('result.mate.b') : t('result.mate.w'))
+      : t('result.stalemate');
   } else { g.over = false; g.result = ''; }
   if (g.over && !g.ratingAwarded && mode === 'bot'){
-  g.ratingAwarded = true;
-  let gain = 0;
-  if (g.result.includes('Мат')){
-    const winner = g.result.includes('белых') ? 'w' : 'b';
-    if (winner === humanColor){
-      gain = calculateRatingGain(getRating(), botLevel);
-      setRating(getRating() + gain);
+    g.ratingAwarded = true;
+    let gain = 0;
+    if (g.result === t('result.mate.w') || g.result === t('result.mate.b')){
+      const winner = g.result === t('result.mate.w') ? 'w' : 'b';
+      if (winner === humanColor){
+        gain = calculateRatingGain(getRating(), botLevel);
+        setRating(getRating() + gain);
+      }
     }
+    game.lastRatingGain = gain;
+    updateRatingDisplay();
   }
-  game.lastRatingGain = gain;
-  updateRatingDisplay();
-}
 }
 
 /* =========================================================
@@ -1013,13 +1216,13 @@ function updateExitFocus(){
   if (botThinking){
     exitFocusChip.style.visibility = '';
     exitFocusChip.className = 'chip ' + game.turn;
-    exitFocusText.textContent = 'Бот думает…';
+    exitFocusText.textContent = t('status.thinking');
     return;
   }
   exitFocusChip.style.visibility = '';
   exitFocusChip.className = 'chip ' + game.turn;
-  let txt = game.turn === 'w' ? 'Ход белых' : 'Ход чёрных';
-  if (game.inCheck) txt += ' — шах!';
+  let txt = game.turn === 'w' ? t('status.white') : t('status.black');
+  if (game.inCheck) txt += ' ' + t('status.check');
   exitFocusText.textContent = txt;
 }
 
@@ -1053,7 +1256,7 @@ function render(){
   const checkSq = S.inCheck ? findKing(S.board, S.turn) : null;
   const lm = S.lastMove;
 
-    const flip = mode === 'bot' && humanColor === 'b';
+  const flip = mode === 'bot' && humanColor === 'b';
   for (let i = 0; i < 8; i++){
     for (let j = 0; j < 8; j++){
       const r = flip ? 7 - i : i;
@@ -1080,7 +1283,7 @@ function render(){
         ch.className = 'cap-hl';
         el.appendChild(ch);
       }
-            if (j === 0){
+      if (j === 0){
         const sp = document.createElement('span');
         sp.className = 'coord rank'; sp.textContent = 8 - r;
         el.appendChild(sp);
@@ -1132,8 +1335,6 @@ function render(){
     });
   }
 
-  // ▼▼▼ Поворот фигур: в режиме бота — фиксированный (без анимации),
-  //     в режиме с другом — как раньше, по чей ход ▼▼▼
   const targetRot = mode === 'bot' ? 0 : (S.turn === 'b' ? 180 : 0);
   const turnChanged = mode !== 'bot'
     && viewingPly === null
@@ -1141,7 +1342,6 @@ function render(){
     && lastRenderTurn !== null
     && lastRenderTurn !== S.turn;
   const startRot = S.turn === 'b' ? 0 : 180;
-  // ▲▲▲
   boardEl.querySelectorAll('.piece svg').forEach(svg => {
     if (turnChanged){
       svg.style.transition = 'none';
@@ -1183,7 +1383,10 @@ function renderStatus(){
   statusEl.className = 'status';
 
   if (viewingPly !== null){
-    statusEl.innerHTML = `<span>Просмотр: ${viewingPly === 0 ? 'начальная позиция' : Math.ceil(viewingPly/2) + '. ' + (viewingPly % 2 === 1 ? 'белые' : 'чёрные')}</span>`;
+    const pos = viewingPly === 0
+      ? t('history.initial')
+      : `${Math.ceil(viewingPly/2)}. ${viewingPly % 2 === 1 ? t('history.white') : t('history.black')}`;
+    statusEl.innerHTML = `<span>${t('history.viewing')} ${pos}</span>`;
     return;
   }
 
@@ -1193,14 +1396,15 @@ function renderStatus(){
     return;
   }
   if (botThinking){
-    statusEl.innerHTML = `<span class="chip ${game.turn}"></span><span>Бот думает…</span>`;
+    statusEl.innerHTML = `<span class="chip ${game.turn}"></span><span>${t('status.thinking')}</span>`;
     return;
   }
   const chip = `<span class="chip ${game.turn}"></span>`;
-  let txt = game.turn === 'w' ? 'Ход белых' : 'Ход чёрных';
-  if (game.inCheck) txt += ' — шах!';
+  let txt = game.turn === 'w' ? t('status.white') : t('status.black');
+  if (game.inCheck) txt += ' ' + t('status.check');
   statusEl.innerHTML = chip + `<span>${txt}</span>`;
 }
+
 function updateRatingDisplay(){
   const r = getRating();
   const el1 = document.getElementById('ratingValue');
@@ -1233,8 +1437,8 @@ function renderMoves(){
   } else {
     historyBar.classList.remove('hidden');
     historyPos.textContent = viewingPly === 0
-      ? 'начальная позиция'
-      : `${Math.ceil(viewingPly/2)}. ${viewingPly % 2 === 1 ? 'белые' : 'чёрные'}`;
+      ? t('history.initial')
+      : `${Math.ceil(viewingPly/2)}. ${viewingPly % 2 === 1 ? t('history.white') : t('history.black')}`;
   }
 }
 
@@ -1314,7 +1518,7 @@ function showGameOverBar(){
   gameOverText.textContent = game.result;
   const gainEl = document.getElementById('ratingGain');
   if (mode === 'bot' && game.lastRatingGain > 0){
-    gainEl.textContent = `+${game.lastRatingGain} к рейтингу`;
+    gainEl.textContent = t('result.ratingGain').replace('{n}', game.lastRatingGain);
   } else {
     gainEl.textContent = '';
   }
@@ -1329,58 +1533,90 @@ function showModeSelect(){
   document.body.classList.add('mode-select-active');
   modeSelectEl.classList.remove('hidden');
   botSettingsEl.hidden = true;
-  document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.color-btn[data-color="w"]').classList.add('active');
+  document.querySelectorAll('#botColorChoice .color-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('#botColorChoice .color-btn[data-color="w"]').classList.add('active');
   selectedColor = 'w';
   gameGeneration++;
   botThinking = false;
   viewingPly = null;
+  createBotWorker();   // ← тоже убить поиск
   hideGameOverBar();
 }
 
 /* =========================================================
-   ДВИЖОК БОТА
+   ДВИЖОК БОТА (Web Worker)
    ========================================================= */
-const LEVEL_CONFIG = {
-  1:  { depth: 1, timeLimit: 300,  blunder: 0.30, topN: 5, topProb: 0.5 },
-  2:  { depth: 1, timeLimit: 500,  blunder: 0.15, topN: 4, topProb: 0.4 },
-  3:  { depth: 2, timeLimit: 800,  blunder: 0.05, topN: 3, topProb: 0.3 },
-  4:  { depth: 2, timeLimit: 1200, blunder: 0,    topN: 2, topProb: 0.15 },
-  5:  { depth: 3, timeLimit: 1500, blunder: 0,    topN: 1, topProb: 0 },
-  6:  { depth: 3, timeLimit: 2000, blunder: 0,    topN: 1, topProb: 0 },
-  7:  { depth: 4, timeLimit: 2500, blunder: 0,    topN: 1, topProb: 0 },
-  8:  { depth: 4, timeLimit: 3000, blunder: 0,    topN: 1, topProb: 0 },
-  9:  { depth: 4, timeLimit: 4000, blunder: 0,    topN: 1, topProb: 0 },
-  10: { depth: 5, timeLimit: 5000, blunder: 0,    topN: 1, topProb: 0 },
-};
 
+/* ---- RULES_SRC: исходники правил, сериализованные для воркера ---- */
+const RULES_SRC = [
+  // Константы — сначала, const не хойстится
+  'const OTHER = ' + JSON.stringify(OTHER) + ';',
+  'const FILES = ' + JSON.stringify(FILES) + ';',
+  'const GLYPH = ' + JSON.stringify(GLYPH) + ';',
+  'const PIECE_VALUE = ' + JSON.stringify(PIECE_VALUE) + ';',
+  'const KNIGHT_DELTAS = ' + JSON.stringify(KNIGHT_DELTAS) + ';',
+  'const KING_DELTAS = ' + JSON.stringify(KING_DELTAS) + ';',
+  'const BISHOP_DIRS = ' + JSON.stringify(BISHOP_DIRS) + ';',
+  'const ROOK_DIRS = ' + JSON.stringify(ROOK_DIRS) + ';',
+  // Функции — берём их исходник
+  isAttacked.toString(),
+  findKing.toString(),
+  isKingInCheck.toString(),
+  addPawnMove.toString(),
+  pseudoMoves.toString(),
+  boardAfter.toString(),
+  legalMovesFor.toString(),
+  allLegalMoves.toString(),
+  notate.toString(),
+  applyMoveMeta.toString(),
+  cloneBoard.toString(),
+  cloneGame.toString(),
+].join('\n');
+
+/* ---- SEARCH_SRC: поиск с TT и killers ---- */
+const SEARCH_SRC = `
 let searchStartTime = 0;
 let timeLimit = 2000;
 let nodeCount = 0;
 let searchAborted = false;
+let stopRequested = false;
+
+const TT = new Map();
+const TT_MAX = 200000;
+const killerMoves = [];
+
+function moveEq(a, b){
+  return a && b
+    && a.from.r === b.from.r && a.from.c === b.from.c
+    && a.to.r === b.to.r && a.to.c === b.to.c
+    && (a.promotion || '') === (b.promotion || '')
+    && (a.castle || '') === (b.castle || '')
+    && !!a.enPassant === !!b.enPassant;
+}
+
+function boardKey(board, turn, castling, ep){
+  let h = 0;
+  for (let r = 0; r < 8; r++){
+    for (let c = 0; c < 8; c++){
+      const p = board[r][c];
+      if (!p) continue;
+      const code = (p.color === 'w' ? 0 : 6) + 'kqrbnp'.indexOf(p.type) + 1;
+      h = (Math.imul(h, 13) + code * 64 + (r * 8 + c)) | 0;
+    }
+  }
+  h = (Math.imul(h, 3) + (turn === 'w' ? 0 : 1)) | 0;
+  h = (Math.imul(h, 17) + (castling.wK ? 1 : 0) + (castling.wQ ? 2 : 0) + (castling.bK ? 4 : 0) + (castling.bQ ? 8 : 0)) | 0;
+  if (ep) h = (Math.imul(h, 19) + ep.r * 8 + ep.c + 1) | 0;
+  return h;
+}
 
 function checkTime(){
+  if (stopRequested) { searchAborted = true; return true; }
   nodeCount++;
   if ((nodeCount & 511) === 0){
     if (Date.now() - searchStartTime > timeLimit) searchAborted = true;
   }
   return searchAborted;
-}
-
-function cloneGame(g){
-  return {
-    board: cloneBoard(g.board),
-    turn: g.turn,
-    castling: { ...g.castling },
-    ep: g.ep ? { ...g.ep } : null,
-    selected: null,
-    legal: [],
-    lastMove: null,
-    history: [],
-    inCheck: false,
-    over: false,
-    result: ''
-  };
 }
 
 function transformationPotential(g, r, c, piece){
@@ -1396,11 +1632,9 @@ function transformationPotential(g, r, c, piece){
       if (gain > best) best = gain;
     }
   };
-
   if (piece.type === 'p'){
     const dir = piece.color === 'w' ? -1 : 1;
-    consider(r + dir, c - 1);
-    consider(r + dir, c + 1);
+    consider(r + dir, c - 1); consider(r + dir, c + 1);
   } else if (piece.type === 'n'){
     for (const [dr, dc] of KNIGHT_DELTAS) consider(r + dr, c + dc);
   } else if (piece.type === 'k'){
@@ -1433,18 +1667,34 @@ function evaluate(g, color){
     const p = g.board[r][c];
     if (!p) continue;
     let v = PIECE_VALUE[p.type] || 0;
-    if (p.type !== 'k'){
-      v += transformationPotential(g, r, c, p) * 0.5;
-    }
+    if (p.type !== 'k') v += transformationPotential(g, r, c, p) * 0.5;
     score += (p.color === 'w' ? v : -v);
   }
   return color === 'w' ? score : -score;
 }
 
-function moveScore(g, mv){
-  const t = g.board[mv.to.r][mv.to.c];
-  if (!t) return 0;
-  return (PIECE_VALUE[t.type] || 0) * 10;
+function orderMoves(g, moves, ttMove, ply){
+  const scored = moves.map(mv => {
+    let s = 0;
+    if (ttMove && moveEq(mv, ttMove)) s += 100000;
+    const victim = g.board[mv.to.r][mv.to.c];
+    if (victim){
+      const attacker = g.board[mv.from.r][mv.from.c];
+      s += (PIECE_VALUE[victim.type] || 0) * 1000 - (PIECE_VALUE[attacker.type] || 0) * 10;
+    }
+    const k = killerMoves[ply];
+    if (k){
+      if (k[0] && moveEq(mv, k[0])) s += 800;
+      else if (k[1] && moveEq(mv, k[1])) s += 400;
+    }
+    const fromPiece = g.board[mv.from.r][mv.from.c];
+    if (fromPiece && fromPiece.type === 'p'){
+      s += (fromPiece.color === 'w' ? (6 - mv.to.r) : (mv.to.r - 1));
+    }
+    return { mv, s };
+  });
+  scored.sort((a, b) => b.s - a.s);
+  return scored.map(x => x.mv);
 }
 
 function quiescence(g, alpha, beta, color, maxDepth){
@@ -1473,36 +1723,77 @@ function quiescence(g, alpha, beta, color, maxDepth){
   return alpha;
 }
 
-function negamax(g, depth, alpha, beta, color){
+function negamax(g, depth, alpha, beta, color, ply, qDepth){
   if (checkTime()) return 0;
-  if (depth <= 0) return quiescence(g, alpha, beta, color, 4);
+
+  const origAlpha = alpha;
+  const key = boardKey(g.board, color, g.castling, g.ep);
+  const tt = TT.get(key);
+  let ttMove = null;
+  if (tt){
+    ttMove = tt.move;
+    if (tt.depth >= depth){
+      if (tt.flag === 'exact') return tt.score;
+      if (tt.flag === 'lower' && tt.score >= beta) return tt.score;
+      if (tt.flag === 'upper' && tt.score <= alpha) return tt.score;
+    }
+  }
+
+  if (depth <= 0) return quiescence(g, alpha, beta, color, qDepth);
 
   const moves = allLegalMoves(g, color);
   if (moves.length === 0){
     const inCheck = isKingInCheck(g, color);
-    return inCheck ? -100000 + (10 - depth) : 0;
+    return inCheck ? -100000 + ply : 0;
   }
 
-  moves.sort((a, b) => moveScore(g, b) - moveScore(g, a));
-
+  const ordered = orderMoves(g, moves, ttMove, ply);
   let best = -Infinity;
-  for (const mv of moves){
+  let bestMove = null;
+
+  for (const mv of ordered){
+    const isCapture = g.board[mv.to.r][mv.to.c] || mv.enPassant;
     const child = cloneGame(g);
     applyMoveMeta(child, mv);
-    const score = -negamax(child, depth - 1, -beta, -alpha, OTHER[color]);
-    if (score > best) best = score;
+    const score = -negamax(child, depth - 1, -beta, -alpha, OTHER[color], ply + 1);
+    if (searchAborted) return 0;
+    if (score > best){ best = score; bestMove = mv; }
     if (best > alpha) alpha = best;
-    if (alpha >= beta) break;
+    if (alpha >= beta){
+      if (!isCapture){
+        if (!killerMoves[ply]) killerMoves[ply] = [];
+        if (!killerMoves[ply][0] || !moveEq(killerMoves[ply][0], mv)){
+          killerMoves[ply][1] = killerMoves[ply][0];
+          killerMoves[ply][0] = mv;
+        }
+      }
+      break;
+    }
   }
+
+  let flag;
+  if (best <= origAlpha) flag = 'upper';
+  else if (best >= beta) flag = 'lower';
+  else flag = 'exact';
+
+  if (TT.size >= TT_MAX){
+    const entries = Array.from(TT.entries());
+    TT.clear();
+    for (let i = 0; i < entries.length; i += 2) TT.set(entries[i][0], entries[i][1]);
+  }
+  TT.set(key, { depth, score: best, flag, move: bestMove });
+
   return best;
 }
 
-function chooseBotMove(){
-  const config = LEVEL_CONFIG[botLevel] || LEVEL_CONFIG[5];
-  const g = game;
-  const color = g.turn;
+function searchWorker(g, config){
+  searchStartTime = Date.now();
+  timeLimit = config.timeLimit;
+  nodeCount = 0;
+  searchAborted = false;
 
-  const moves = allLegalMoves(g, color);
+  const color = g.turn;
+  let moves = allLegalMoves(g, color);
   if (moves.length === 0) return null;
   if (moves.length === 1) return moves[0];
 
@@ -1510,46 +1801,101 @@ function chooseBotMove(){
     return moves[Math.floor(Math.random() * moves.length)];
   }
 
-  moves.sort((a, b) => moveScore(g, b) - moveScore(g, a));
-
-  searchStartTime = Date.now();
-  timeLimit = config.timeLimit;
-  nodeCount = 0;
-  searchAborted = false;
-
-  let scored = [];
   let bestMove = moves[0];
+  let bestScored = null;
 
   for (let d = 1; d <= config.depth; d++){
-    scored = [];
-    for (const mv of moves){
+    // ★ d===1: тактический порядок; d>1: сохраняем порядок с прошлой глубины
+    const ordered = d === 1 ? orderMoves(g, moves, null, 0) : moves;
+    const depthScored = [];
+
+    for (const mv of ordered){
       const child = cloneGame(g);
       applyMoveMeta(child, mv);
-      const score = -negamax(child, d - 1, -Infinity, Infinity, OTHER[color]);
-      scored.push({ mv, score });
+      const score = -negamax(child, d - 1, -Infinity, Infinity, OTHER[color], 1);
+      depthScored.push({ mv, score });
       if (searchAborted) break;
     }
 
-    if (!searchAborted && scored.length){
-      scored.sort((a, b) => b.score - a.score);
-      bestMove = scored[0].mv;
-      moves.length = 0;
-      for (const s of scored) moves.push(s.mv);
+    if (!searchAborted && depthScored.length){
+      depthScored.sort((a, b) => b.score - a.score);
+      bestMove = depthScored[0].mv;
+      moves = depthScored.map(s => s.mv);
+      bestScored = depthScored;                 // ★ запоминаем последнюю ЗАВЕРШЁННУЮ
     }
-
     if (searchAborted) break;
     if (Date.now() - searchStartTime > timeLimit) break;
   }
 
-  if (scored.length === 0) return bestMove;
-
+  // ★ Возвращаем только из завершённой глубины
+  if (!bestScored) return bestMove;
   if (config.topN > 1 && Math.random() < config.topProb){
-    const topN = Math.min(config.topN, scored.length);
-    return scored[Math.floor(Math.random() * topN)].mv;
+    return bestScored[Math.floor(Math.random() * Math.min(config.topN, bestScored.length))].mv;
   }
-
-  return scored[0].mv;
+  return bestScored[0].mv;
 }
+
+self.onmessage = (e) => {
+  const { type } = e.data;
+  if (type === 'search'){
+    const { generation, board, turn, castling, ep, config } = e.data;
+    const g = {
+      board: cloneBoard(board), turn, castling, ep,
+      selected: null, legal: [], lastMove: null,
+      history: [], inCheck: false, over: false, result: ''
+    };
+    const mv = searchWorker(g, config);
+    self.postMessage({ type: 'move', generation, move: mv });
+  } else if (type === 'reset'){
+    TT.clear();
+    killerMoves.length = 0;
+  }
+};
+`;
+
+/* ---- Создание воркера ---- */
+let botWorker = null;
+
+function createBotWorker(){
+  if (botWorker) botWorker.terminate();
+  const src = RULES_SRC + '\n' + SEARCH_SRC;
+  const blob = new Blob([src], { type: 'application/javascript' });
+  botWorker = new Worker(URL.createObjectURL(blob));
+  botWorker.onmessage = (e) => {
+    const { type, generation, move } = e.data;
+    if (type !== 'move') return;
+    if (generation !== gameGeneration) return;   // устаревший ответ — игнор
+    botThinking = false;
+    viewingPly = null;
+    if (move) playMove(game, move);
+    else render();
+  };
+  botWorker.onerror = (err) => {
+    console.error('Worker error:', err);
+    botThinking = false;
+    render();
+  };
+}
+createBotWorker();
+
+/* ---- Уровни сложности ---- */
+const LEVEL_CONFIG = {
+  1:  { depth: 1, timeLimit: 300,   blunder: 0.30, topN: 5, topProb: 0.5,  quiescenceDepth: 2 },
+  2:  { depth: 1, timeLimit: 500,   blunder: 0.15, topN: 4, topProb: 0.4,  quiescenceDepth: 2 },
+  3:  { depth: 2, timeLimit: 800,   blunder: 0.05, topN: 3, topProb: 0.3,  quiescenceDepth: 3 },
+  4:  { depth: 2, timeLimit: 1200,  blunder: 0,    topN: 2, topProb: 0.15, quiescenceDepth: 3 },
+  5:  { depth: 3, timeLimit: 1500,  blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 4 },
+  6:  { depth: 3, timeLimit: 2000,  blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 4 },
+  7:  { depth: 4, timeLimit: 2500,  blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 4 },
+  8:  { depth: 4, timeLimit: 3000,  blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 4 },
+  9:  { depth: 4, timeLimit: 4000,  blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 5 },
+  10: { depth: 5, timeLimit: 5000,  blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 5 },
+  11: { depth: 5, timeLimit: 8000,  blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 5 },
+  12: { depth: 6, timeLimit: 10000, blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 5 },
+  13: { depth: 6, timeLimit: 14000, blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 6 },
+  14: { depth: 7, timeLimit: 18000, blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 6 },
+  15: { depth: 8, timeLimit: 25000, blunder: 0,    topN: 1, topProb: 0,    quiescenceDepth: 6 },
+};
 
 function maybeBotMove(){
   if (mode !== 'bot') return;
@@ -1557,17 +1903,18 @@ function maybeBotMove(){
   if (game.turn !== botColor) return;
   if (viewingPly !== null) return;
 
-  const gen = gameGeneration;
   botThinking = true;
   render();
 
-  setTimeout(() => {
-    if (gen !== gameGeneration) return;
-    const mv = chooseBotMove();
-    botThinking = false;
-    if (mv) playMove(game, mv);
-    else render();
-  }, 120);
+  botWorker.postMessage({
+    type: 'search',
+    generation: gameGeneration,
+    board: cloneBoard(game.board),
+    turn: game.turn,
+    castling: { ...game.castling },
+    ep: game.ep ? { ...game.ep } : null,
+    config: LEVEL_CONFIG[botLevel] || LEVEL_CONFIG[5]
+  });
 }
 
 /* =========================================================
@@ -1608,7 +1955,7 @@ function showRulesDemo(){
     mover.classList.add('pop');
   }, 2200));
   timers.push(setTimeout(() => {
-    caption.textContent = 'Ладья срубила ферзя — и стала ферзём!';
+    caption.textContent = t('demo.caption2');
     caption.style.color = 'var(--c-secondary)';
   }, 2500));
   timers.push(setTimeout(dismiss, 5000));
@@ -1626,12 +1973,6 @@ const botLevelLabelEl= document.getElementById('botLevelLabel');
 const botLevelHintEl = document.getElementById('botLevelHint');
 const startBotGameBtn= document.getElementById('startBotGame');
 
-const LEVEL_HINTS = {
-  1:'Новичок', 2:'Очень слабый', 3:'Слабый', 4:'Ниже среднего',
-  5:'Средний', 6:'Выше среднего', 7:'Сильный', 8:'Очень сильный',
-  9:'Опасный', 10:'Максимум'
-};
-
 modeFriendBtn.addEventListener('click', () => {
   mode = 'friend';
   humanColor = 'w';
@@ -1646,12 +1987,12 @@ modeBotBtn.addEventListener('click', () => {
 
 botLevelEl.addEventListener('input', () => {
   botLevelLabelEl.textContent = botLevelEl.value;
-  botLevelHintEl.textContent = LEVEL_HINTS[botLevelEl.value] || '';
+  updateBotLevelHint();
 });
 
-document.querySelectorAll('.color-btn').forEach(btn => {
+document.querySelectorAll('#botColorChoice .color-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#botColorChoice .color-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     selectedColor = btn.dataset.color;
   });
@@ -1663,6 +2004,35 @@ startBotGameBtn.addEventListener('click', () => {
   humanColor = selectedColor === 'random' ? (Math.random() < 0.5 ? 'w' : 'b') : selectedColor;
   botColor = OTHER[humanColor];
   startGame();
+});
+
+/* =========================================================
+   НАСТРОЙКИ (язык)
+   ========================================================= */
+const settingsBtn   = document.getElementById('settingsBtn');
+const settingsModal = document.getElementById('settingsModal');
+const settingsClose = document.getElementById('settingsClose');
+
+settingsBtn.addEventListener('click', () => {
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === currentLang);
+  });
+  settingsModal.classList.remove('hidden');
+});
+
+settingsClose.addEventListener('click', () => {
+  settingsModal.classList.add('hidden');
+});
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentLang = btn.dataset.lang;
+    localStorage.setItem('transChess.lang', currentLang);
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === currentLang);
+    });
+    applyLanguage();
+  });
 });
 
 function startGame(){
@@ -1723,7 +2093,9 @@ window.addEventListener('appinstalled', () => {
   installButton.hidden = true;
   console.log('transChess installed');
 });
+
 updateRatingDisplay();
+applyLanguage();
 showRulesDemo();
 </script>
 </body>
