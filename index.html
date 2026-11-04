@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru" class="dark">
 <head>
@@ -59,6 +58,8 @@ body.focus-mode .game{ gap: 0; }
   border-radius: 4px; overflow: hidden;
   box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 2px 3px rgba(0,0,0,.4), 0 22px 44px rgba(0,0,0,.55);
   user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transform-origin: center center;
+  will-change: transform;
 }
 
 .material-bar{
@@ -81,6 +82,7 @@ body.focus-mode .game{ gap: 0; }
 .material-bar .chip.w{ background:#f4f4f4; border-color:#f4f4f4; }
 .material-bar .chip.b{ background:#202020; border-color:#9a9a9a; }
 .material-bar.ahead{ color: var(--c-secondary); }
+.material-bar.behind{ color: var(--c-bad); }
 .material-bar-top{ transform: rotate(180deg); }
 
 button#newGame, #install, #focusBtn {
@@ -96,6 +98,17 @@ button#newGame:active, #install:active { transform: translateY(1px); }
 #install[hidden] { display: none; }
 #focusBtn { background: transparent; border: 1px solid var(--c-border); color: var(--c-font); }
 #focusBtn:hover { background: var(--c-bg-mid); filter: none; }
+
+.flip-option{
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--c-font);
+  cursor: pointer; padding: 6px 4px; user-select: none;
+}
+.flip-option input[type=checkbox]{
+  width: 16px; height: 16px; accent-color: var(--c-secondary);
+  cursor: pointer; margin: 0;
+}
+.flip-option[hidden]{ display: none; }
 
 .sq{ position: relative; display:flex; align-items:center; justify-content:center; cursor: pointer; }
 .sq.light{ background: var(--sq-light); }
@@ -136,6 +149,8 @@ button#newGame:active, #install:active { transform: translateY(1px); }
 .sq.dark  .coord{ color: var(--sq-light); opacity:.85; }
 .coord.rank{ top: 2px;  left: 4px; }
 .coord.file{ bottom: 2px; right: 4px; }
+.coord.rank.pos-br{ top: auto; left: auto; bottom: 2px; right: 4px; }
+.coord.file.pos-tl{ bottom: auto; right: auto; top: 2px; left: 4px; }
 
 .piece{ inset:0; z-index:2; pointer-events:none; will-change: transform; }
 .piece svg{
@@ -582,6 +597,10 @@ body.analysis-mode .material-bar-top{ display: none !important; }
     <div id="status" class="status"></div>
     <div class="legend" data-i18n-html="legend.text">При взятии фигура <b>превращается</b> в тип срубленной.<br>Король не трансформируется.<br>Красным подсвечены фигуры, которые можно срубить.</div>
     <button id="newGame" data-i18n="btn.newGame">Новая игра</button>
+    <label id="flipPiecesLabel" class="flip-option" hidden>
+      <input type="checkbox" id="flipPieces">
+      <span data-i18n="option.flipPieces">Переворачивать фигуры</span>
+    </label>
     <button id="toMenuBtn" class="mode-btn" style="padding:9px 14px;min-width:0;font-size:13px;text-transform:uppercase;font-weight:700;" data-i18n="btn.toMenu">В меню</button>
     <button id="install" hidden data-i18n="btn.install">Установить приложение</button>
     <button id="focusBtn" data-i18n="btn.focus">Фокус</button>
@@ -813,6 +832,8 @@ const historyBar     = document.getElementById('historyBar');
 const historyPos     = document.getElementById('historyPos');
 const gameOverBar    = document.getElementById('gameOverBar');
 const gameOverText   = document.getElementById('gameOverText');
+const flipPiecesCheckbox = document.getElementById('flipPieces');
+const flipPiecesLabel = document.getElementById('flipPiecesLabel');
 
 const analysisPanel          = document.getElementById('analysisPanel');
 const analysisStatus         = document.getElementById('analysisStatus');
@@ -830,6 +851,7 @@ const modeAnalysisBtn        = document.getElementById('modeAnalysis');
 
 let pieceIdCounter = 0;
 let skipAnimation = true;
+let lastFlip = null;      // last containerFlipped state
 let lastRenderTurn = null;
 
 function initialBoard(){
@@ -870,6 +892,7 @@ let pendingPromotion = false;
 
 /* ==== Состояние бота / режима ==== */
 let mode = 'friend';
+let flipPieces = localStorage.getItem('transChess.flipPieces') !== 'false';
 let botLevel = 5;
 let botColor = 'b';
 let humanColor = 'w';
@@ -877,6 +900,9 @@ let selectedColor = 'w';
 let botThinking = false;
 let viewingPly = null;
 let gameGeneration = 0;
+let botTimerInterval = null;
+let botThinkStart = 0;
+let botThinkTimeLimit = 0;
 
 /* ==== Состояние режима анализа ==== */
 let analysisMode = false;
@@ -968,6 +994,7 @@ const I18N = {
     'analysis.noMoves': 'Ходов нет (мат или пат)',
     'analysis.bestMove': 'Лучший ход:',
     'analysis.hint': 'Кликните по фигуре в палитре, чтобы поставить её на доску. Кликните по фигуре на доске, чтобы переместить её. X — удалить.',
+    'option.flipPieces': 'Переворачивать фигуры',
   },
   en: {
     'page.title': 'Chess: Capture-Transform',
@@ -1043,6 +1070,7 @@ const I18N = {
     'analysis.noMoves': 'No moves (checkmate or stalemate)',
     'analysis.bestMove': 'Best move:',
     'analysis.hint': 'Click a piece in the palette to place it. Click a board piece to move it. X — delete.',
+    'option.flipPieces': 'Flip pieces',
   }
 };
 
@@ -1101,7 +1129,10 @@ function calculateRatingGain(playerRating, level){
 function newGame(){
   gameGeneration++;
   botThinking = false;
+  stopBotTimer();
   viewingPly = null;
+  skipAnimation = true;
+  lastFlip = null;
   createBotWorker();   // ← terminate старый + свежий TT
   const initBoard = initialBoard();
   game = {
@@ -1401,10 +1432,34 @@ function updateMaterialBar(){
     html = `<span class="chip b"></span><span>Чёрные +${-diff}</span>`;
   }
 
-  materialBar.classList.toggle('ahead', diff !== 0);
-  materialBarTop.classList.toggle('ahead', diff !== 0);
+  // Кто физически снизу доски?
+  let bottomColor;
+  if (analysisMode){
+    bottomColor = 'w';
+  } else if (mode === 'bot'){
+    bottomColor = humanColor;
+  } else {
+    if (flipPieces){
+      bottomColor = 'w';                // фигуры крутятся, доска не переворачивается
+    } else {
+      const turn = viewingPly !== null
+        ? (viewingPly % 2 === 0 ? 'w' : 'b')
+        : game.turn;
+      bottomColor = turn;               // доска переворачивается — снизу тот, кто ходит
+    }
+  }
+  const topColor = OTHER[bottomColor];
+
+  const isBehind = (col) => (col === 'w' && diff < 0) || (col === 'b' && diff > 0);
+  const isAhead  = (col) => (col === 'w' && diff > 0) || (col === 'b' && diff < 0);
+
   materialBar.innerHTML    = html;
   materialBarTop.innerHTML = html;
+
+  materialBar.classList.toggle('ahead',  isAhead(bottomColor));
+  materialBar.classList.toggle('behind', isBehind(bottomColor));
+  materialBarTop.classList.toggle('ahead',  isAhead(topColor));
+  materialBarTop.classList.toggle('behind', isBehind(topColor));
 }
 function updateBotInfo(){
   const badge = document.getElementById('botInfoBadge');
@@ -1445,7 +1500,7 @@ function updateExitFocus(){
   if (botThinking){
     exitFocusChip.style.visibility = '';
     exitFocusChip.className = 'chip ' + game.turn;
-    exitFocusText.textContent = t('status.thinking');
+    exitFocusText.textContent = t('status.thinking') + getThinkingTimeStr();
     return;
   }
   exitFocusChip.style.visibility = '';
@@ -1459,13 +1514,66 @@ focusBtn.addEventListener('click', enterFocusMode);
 exitFocusBtn.addEventListener('click', leaveFocusMode);
 
 /* =========================================================
-   ОТРИСОВКА + FLIP + ПОВОРОТ
+   ТАЙМЕР БОТА
    ========================================================= */
+function startBotTimer(timeLimit){
+  stopBotTimer();
+  botThinkStart = Date.now();
+  botThinkTimeLimit = timeLimit;
+  botTimerInterval = setInterval(() => {
+    if (!botThinking){ stopBotTimer(); return; }
+    renderStatus();
+    updateExitFocus();
+  }, 200);
+}
+
+function stopBotTimer(){
+  if (botTimerInterval){ clearInterval(botTimerInterval); botTimerInterval = null; }
+  botThinkTimeLimit = 0;
+}
+
+function getThinkingTimeStr(){
+  if (!botThinkTimeLimit) return '';
+  const remaining = botThinkTimeLimit - (Date.now() - botThinkStart);
+  if (remaining <= 0) return '';
+  const sec = remaining / 1000;
+  const display = sec >= 10 ? Math.round(sec) : (Math.round(sec * 10) / 10);
+  return currentLang === 'ru' ? ` (≈${display} с)` : ` (≈${display}s)`;
+}
+
+/* =========================================================
+   ОТРИСОВКА + ПЛАВНЫЙ ПЕРЕВОРОТ ДОСКИ
+   ========================================================= */
+const FLIP_DURATION = 0.42; // секунд
+
 function render(){
   const S = viewingPly !== null ? buildViewState() : game;
 
+  // --- Какая должна быть ориентация доски и как повернуть фигуры ---
+  let containerFlipped, pieceRotTarget;
+  if (analysisMode){
+    containerFlipped = false;
+    pieceRotTarget = 0;
+  } else if (mode === 'bot'){
+    containerFlipped = humanColor === 'b';
+    pieceRotTarget = containerFlipped ? -180 : 0;
+  } else {
+    if (flipPieces){
+      containerFlipped = false;
+      pieceRotTarget = S.turn === 'b' ? 180 : 0;
+    } else {
+      containerFlipped = S.turn === 'b';
+      pieceRotTarget = containerFlipped ? -180 : 0;
+    }
+  }
+
+  const flipChanged = lastFlip !== null && lastFlip !== containerFlipped;
+  const prevContainerFlipped = lastFlip;
+  lastFlip = containerFlipped;
+
+  // --- Снимок старых позиций для плавного движения фигур (не при флипе) ---
   const oldRects = new Map();
-  if (!skipAnimation){
+  if (!skipAnimation && !flipChanged){
     boardEl.querySelectorAll('.piece[data-id]').forEach(el => {
       oldRects.set(el.dataset.id, el.getBoundingClientRect());
     });
@@ -1487,11 +1595,9 @@ function render(){
   const bestMove = (analysisMode && analysisBestMove && !analysisThinking)
     ? analysisBestMove : null;
 
-  const flip = !analysisMode && mode === 'bot' && humanColor === 'b';
-  for (let i = 0; i < 8; i++){
-    for (let j = 0; j < 8; j++){
-      const r = flip ? 7 - i : i;
-      const c = flip ? 7 - j : j;
+  // Квадраты всегда рисуем в логическом порядке; ориентацию делает CSS-трансформ
+  for (let r = 0; r < 8; r++){
+    for (let c = 0; c < 8; c++){
       const el = document.createElement('div');
       el.className = 'sq ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
       el.dataset.r = r; el.dataset.c = c;
@@ -1524,14 +1630,20 @@ function render(){
         ch.className = 'cap-hl';
         el.appendChild(ch);
       }
-      if (j === 0){
+
+      // Координаты — выбираем положение с учётом экранной ориентации
+      const sRow = containerFlipped ? 7 - r : r;
+      const sCol = containerFlipped ? 7 - c : c;
+      if (sCol === 0){
         const sp = document.createElement('span');
-        sp.className = 'coord rank'; sp.textContent = 8 - r;
+        sp.className = 'coord rank' + (containerFlipped ? ' pos-br' : '');
+        sp.textContent = 8 - r;
         el.appendChild(sp);
       }
-      if (i === 7){
+      if (sRow === 7){
         const sp = document.createElement('span');
-        sp.className = 'coord file'; sp.textContent = FILES[c];
+        sp.className = 'coord file' + (containerFlipped ? ' pos-tl' : '');
+        sp.textContent = FILES[c];
         el.appendChild(sp);
       }
 
@@ -1556,7 +1668,26 @@ function render(){
     }
   }
 
-  if (!skipAnimation){
+  const animate = !skipAnimation;
+
+  // --- Плавный поворот всей доски ---
+  if (flipChanged && animate){
+    const startDeg = prevContainerFlipped ? 180 : 0;
+    const endDeg = containerFlipped ? 180 : 0;
+    boardEl.style.transition = 'none';
+    boardEl.style.transform = `rotate(${startDeg}deg)`;
+    void boardEl.offsetWidth;
+    requestAnimationFrame(() => {
+      boardEl.style.transition = `transform ${FLIP_DURATION}s cubic-bezier(.4,0,.2,1)`;
+      boardEl.style.transform = `rotate(${endDeg}deg)`;
+    });
+  } else {
+    boardEl.style.transition = 'none';
+    boardEl.style.transform = `rotate(${containerFlipped ? 180 : 0}deg)`;
+  }
+
+  // --- Плавное перемещение фигур при обычном ходе (без флипа) ---
+  if (!skipAnimation && !flipChanged){
     boardEl.querySelectorAll('.piece[data-id]').forEach(el => {
       const oldRect = oldRects.get(el.dataset.id);
       if (!oldRect) return;
@@ -1577,29 +1708,63 @@ function render(){
     });
   }
 
-  const targetRot = analysisMode ? 0 : (mode === 'bot' ? 0 : (S.turn === 'b' ? 180 : 0));
+  // --- Поворот фигур ---
+  //  a) при флипе доски — контрповорот, чтобы фигуры оставались прямыми;
+  //  b) в режиме "переворачивать фигуры" — поворот 180° на смену хода.
   const turnChanged = !analysisMode && mode !== 'bot'
     && viewingPly === null
     && !skipAnimation
     && lastRenderTurn !== null
-    && lastRenderTurn !== S.turn;
-  const startRot = S.turn === 'b' ? 0 : 180;
+    && lastRenderTurn !== S.turn
+    && flipPieces;
+
+  let pieceRotStart, pieceRotEnd, pieceRotAnimate = false;
+  if (flipChanged && animate){
+    pieceRotStart = prevContainerFlipped ? -180 : 0;
+    pieceRotEnd   = containerFlipped ? -180 : 0;
+    pieceRotAnimate = true;
+  } else if (turnChanged){
+    pieceRotStart = S.turn === 'b' ? 0 : 180;
+    pieceRotEnd   = S.turn === 'b' ? 180 : 0;
+    pieceRotAnimate = true;
+  } else {
+    pieceRotStart = pieceRotEnd = pieceRotTarget;
+  }
+
   boardEl.querySelectorAll('.piece svg').forEach(svg => {
-    if (turnChanged){
+    if (pieceRotAnimate){
       svg.style.transition = 'none';
-      svg.style.transform = `rotate(${startRot}deg)`;
+      svg.style.transform = `rotate(${pieceRotStart}deg)`;
       void svg.getBoundingClientRect();
       requestAnimationFrame(() => {
-        svg.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        svg.style.transform = `rotate(${targetRot}deg)`;
+        svg.style.transition = `transform ${FLIP_DURATION}s cubic-bezier(.4,0,.2,1)`;
+        svg.style.transform = `rotate(${pieceRotEnd}deg)`;
       });
     } else {
       svg.style.transition = 'none';
-      svg.style.transform = `rotate(${targetRot}deg)`;
+      svg.style.transform = `rotate(${pieceRotEnd}deg)`;
     }
   });
-  lastRenderTurn = S.turn;
 
+  // --- Контрповорот координат при флипе доски ---
+  const coordRotEnd = containerFlipped ? -180 : 0;
+  boardEl.querySelectorAll('.coord').forEach(coord => {
+    if (flipChanged && animate){
+      const startDeg = prevContainerFlipped ? -180 : 0;
+      coord.style.transition = 'none';
+      coord.style.transform = `rotate(${startDeg}deg)`;
+      void coord.getBoundingClientRect();
+      requestAnimationFrame(() => {
+        coord.style.transition = `transform ${FLIP_DURATION}s cubic-bezier(.4,0,.2,1)`;
+        coord.style.transform = `rotate(${coordRotEnd}deg)`;
+      });
+    } else {
+      coord.style.transition = 'none';
+      coord.style.transform = `rotate(${coordRotEnd}deg)`;
+    }
+  });
+
+  lastRenderTurn = S.turn;
   skipAnimation = false;
 
   if (analysisMode) renderAnalysisStatus(); else renderStatus();
@@ -1640,7 +1805,7 @@ function renderStatus(){
     return;
   }
   if (botThinking){
-    statusEl.innerHTML = `<span class="chip ${game.turn}"></span><span>${t('status.thinking')}</span>`;
+    statusEl.innerHTML = `<span class="chip ${game.turn}"></span><span>${t('status.thinking')}${getThinkingTimeStr()}</span>`;
     return;
   }
   const chip = `<span class="chip ${game.turn}"></span>`;
@@ -1689,6 +1854,13 @@ function renderMoves(){
 /* =========================================================
    ВЗАИМОДЕЙСТВИЕ
    ========================================================= */
+flipPiecesCheckbox.checked = flipPieces;
+flipPiecesCheckbox.addEventListener('change', () => {
+  flipPieces = flipPiecesCheckbox.checked;
+  localStorage.setItem('transChess.flipPieces', flipPieces ? 'true' : 'false');
+  if (game) render();
+});
+
 boardEl.addEventListener('click', e => {
   const sq = e.target.closest('.sq');
   if (!sq) return;
@@ -1792,6 +1964,7 @@ function showModeSelect(){
   selectedColor = 'w';
   gameGeneration++;
   botThinking = false;
+  stopBotTimer();
   viewingPly = null;
   createBotWorker();   // ← тоже убить поиск
   hideGameOverBar();
@@ -1803,7 +1976,6 @@ function showModeSelect(){
 
 /* ---- RULES_SRC: исходники правил, сериализованные для воркера ---- */
 const RULES_SRC = [
-  // Константы — сначала, const не хойстится
   'const OTHER = ' + JSON.stringify(OTHER) + ';',
   'const FILES = ' + JSON.stringify(FILES) + ';',
   'const GLYPH = ' + JSON.stringify(GLYPH) + ';',
@@ -1813,7 +1985,6 @@ const RULES_SRC = [
   'const KING_DELTAS = ' + JSON.stringify(KING_DELTAS) + ';',
   'const BISHOP_DIRS = ' + JSON.stringify(BISHOP_DIRS) + ';',
   'const ROOK_DIRS = ' + JSON.stringify(ROOK_DIRS) + ';',
-  // Функции — берём их исходник
   isAttacked.toString(),
   findKing.toString(),
   isKingInCheck.toString(),
@@ -1834,7 +2005,7 @@ let searchStartTime = 0;
 let timeLimit = 2000;
 let searchAborted = false;
 let nodeCount = 0;
-const MATE = 100000;   // маленький мат-скор — не конфликтует с alpha-beta
+const MATE = 100000;
 
 function checkTime(){
   nodeCount++;
@@ -1845,7 +2016,7 @@ function checkTime(){
 }
 
 function evaluate(g, color){
-  const W_PST = 0.5;  // вес позиционной оценки: 15% от исходного
+  const W_PST = 0.5;
   let score = 0;
   for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++){
     const p = g.board[r][c];
@@ -1878,12 +2049,10 @@ function orderMoves(g, moves){
   return scored.map(x => x.mv);
 }
 
-// Quiescence: доигрываем взятия + ПРОВЕРЯЕМ МАТ на каждом листе.
 function quiescence(g, alpha, beta, color, depth){
   if (checkTime()) return evaluate(g, color);
 
   const allMoves = allLegalMoves(g, color);
-  // КРИТИЧНО: проверяем мат/пат даже на depth<=0
   if (allMoves.length === 0){
     return isKingInCheck(g, color) ? -(MATE - (10 - depth)) : 0;
   }
@@ -1958,8 +2127,6 @@ function searchWorker(g, config){
   let completedDepth = 0;
 
   for (let d = 1; d <= config.depth; d++){
-    // Полное окно на КАЖДЫЙ корневой ход — никакой alpha-beta на корне.
-    // Медленнее, но без сюрпризов fail-high при подсчёте iterBest.
     let iterBestMove = null;
     let iterBestScore = -Infinity;
     const iterScores = [];
@@ -2026,6 +2193,7 @@ function createBotWorker(){
       if (type !== 'move') return;
       if (generation !== gameGeneration) return;
       botThinking = false;
+      stopBotTimer();
       viewingPly = null;
       if (move) playMove(game, move);
       else render();
@@ -2033,7 +2201,7 @@ function createBotWorker(){
     botWorker.onerror = (err) => {
       console.error('Worker error:', err);
       botThinking = false;
-      // Fallback: сделаем случайный легальный ход, чтобы игра не застряла
+      stopBotTimer();
       const moves = allLegalMoves(game, game.turn);
       if (moves.length > 0){
         playMove(game, moves[Math.floor(Math.random() * moves.length)]);
@@ -2109,7 +2277,6 @@ function getAnalysisWorker(){
 }
 
 function enterAnalysisMode(){
-  // сброс стандартного режима
   leaveFocusMode();
   hideGameOverBar();
 
@@ -2121,6 +2288,8 @@ function enterAnalysisMode(){
   viewingPly = null;
   gameGeneration++;
   createBotWorker();
+  botThinking = false;
+  stopBotTimer();
 
   document.body.classList.add('analysis-mode');
   modeSelectEl.classList.add('hidden');
@@ -2176,7 +2345,6 @@ function renderAnalysisStatus(){
 }
 
 function handleAnalysisClick(r, c){
-  // Любое действие отменяет «думающего» бота
   if (analysisThinking){
     analysisRequestId++;
     analysisThinking = false;
@@ -2184,7 +2352,6 @@ function handleAnalysisClick(r, c){
   analysisBestMoveInfo.textContent = '';
   analysisBestMove = null;
 
-  // Режим палитры: ставим/удаляем фигуру
   if (analysisSelectedPalette){
     if (analysisSelectedPalette === 'erase'){
       game.board[r][c] = null;
@@ -2206,7 +2373,6 @@ function handleAnalysisClick(r, c){
     return;
   }
 
-  // Режим перемещения
   if (game.selected){
     if (game.selected.r === r && game.selected.c === c){
       game.selected = null;
@@ -2234,7 +2400,6 @@ function analysisMovePiece(fromR, fromC, toR, toC){
   game.board[toR][toC] = piece;
   game.board[fromR][fromC] = null;
 
-  // Трансформация при взятии (правила варианта)
   if (captured && captured.color !== piece.color && piece.type !== 'k'){
     piece.type = captured.type;
   }
@@ -2253,7 +2418,6 @@ function requestAnalysisBestMove(){
     return;
   }
 
-  // Проверим, что есть хотя бы один ход
   const legal = allLegalMoves(game, game.turn);
   if (legal.length === 0){
     analysisBestMoveInfo.textContent = t('analysis.noMoves');
@@ -2272,7 +2436,7 @@ function requestAnalysisBestMove(){
   worker.onmessage = (e) => {
     const { type, generation, move } = e.data;
     if (type !== 'move') return;
-    if (generation !== analysisRequestId) return; // устаревший ответ
+    if (generation !== analysisRequestId) return;
     analysisThinking = false;
     if (move){
       analysisBestMove = move;
@@ -2307,6 +2471,8 @@ function maybeBotMove(){
   if (viewingPly !== null) return;
 
   botThinking = true;
+  const config = LEVEL_CONFIG[botLevel] || LEVEL_CONFIG[5];
+  startBotTimer(config.timeLimit);
   render();
 
   botWorker.postMessage({
@@ -2316,7 +2482,7 @@ function maybeBotMove(){
     turn: game.turn,
     castling: { ...game.castling },
     ep: game.ep ? { ...game.ep } : null,
-    config: LEVEL_CONFIG[botLevel] || LEVEL_CONFIG[5]
+    config
   });
 }
 
@@ -2488,6 +2654,7 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 function startGame(){
   document.body.classList.remove('mode-select-active');
   modeSelectEl.classList.add('hidden');
+  flipPiecesLabel.hidden = (mode !== 'friend');
   newGame();
 }
 
